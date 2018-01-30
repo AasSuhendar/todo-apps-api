@@ -1,0 +1,6 @@
+<testsuites name="jest tests">
+  <testsuite name="### Main endpoint Testing" errors="0" failures="0" skipped="0" timestamp="2018-01-30T23:26:00" time="4.936" tests="1">
+    <testcase classname="### Main endpoint Testing it should get json response with message Wellcome to TODO Apps API" name="### Main endpoint Testing it should get json response with message Wellcome to TODO Apps API" time="0.022">
+    </testcase>
+  </testsuite>
+</testsuites>
