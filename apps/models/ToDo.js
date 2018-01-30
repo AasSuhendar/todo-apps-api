@@ -4,9 +4,13 @@ var Schema = mongoose.Schema
 var ToDoSchema = new Schema({
   name: {
     type: String,
-    required: 'Kindly enter the name of the task'
+    required: true
   },
-  Created_date: {
+  description: {
+    type: String,
+    required: true
+  },
+  created_at: {
     type: Date,
     default: Date.now
   },
