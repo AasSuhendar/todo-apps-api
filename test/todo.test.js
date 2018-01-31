@@ -89,7 +89,7 @@ describe('Evaluasi API todos' , () => {
           .expect(200)
           .end((err, res) => {
             expect(res.statusCode).toBe(200)
-            expect(res.body).toHaveProperty('status', 1)
+            expect(res.body).toHaveProperty('status', true)
             expect(res.body.data).toHaveProperty('name', todo.name)
             expect(res.body.data).toHaveProperty('description', todo.description)
             expect(res.body.data).toHaveProperty('status', todo.status)
