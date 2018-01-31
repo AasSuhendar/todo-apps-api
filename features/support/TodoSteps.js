@@ -2,17 +2,21 @@
 const { Given, When, Then } = require('cucumber')
 const { expect } = require('chai')
 
-Given('a variable set to {int}', function(number) {
+Given('Melani memiliki pekerjaan yang harus dimasukan ke sistem dengan judul {string}',
+  function (title, callback) {
+    // Write code here that turns the phrase above into concrete actions
 
-    //this.setTo(number)
-    // return true;
+    // callback(null, 'pending')
+    expect('Menyiapkan ruang rapat').to.eql(title)
+  })
+
+When('Melani memasukan pekerjaan', function (newTodo, callback) {
+  // Write code here that turns the phrase above into concrete actions
+  //   callback(null, 'pending')
+  // return true
 })
 
-When('I increment the variable by {int}', function(number) {
-    //this.incrementBy(number)
-    // return true
-})
-
-Then('the variable should contain {int}', function(number) {
-    expect(2).to.eql(number)
+Then('Sistem menyimpan pekerjaan tersebut dan menampilkan pesan {string}', function (string, callback) {
+  // Write code here that turns the phrase above into concrete actions
+  //   callback(null, 'pending')
 })
