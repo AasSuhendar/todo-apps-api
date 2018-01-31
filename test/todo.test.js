@@ -4,7 +4,7 @@ let request = require('supertest')
 let server = require('../app')
 let Todo = require('../apps/models/ToDo')
 
-describe('### Todos endpoint Testing ###' , () => {
+describe('Melakukan cek end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list' , () => {
 
   beforeEach((done) => {
     Todo.remove({}, (err) => {
@@ -15,8 +15,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /GET route
    */
-  describe('/GET Todos', () => {
-    test('it should GET all todos', (done) => {
+  describe('Melakukan cek GET end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list', () => {
+    test('Proses test ini melakukan call API GET todo-apps-api.apps.playcourt.id/api/todo-list dan seharusnya memberikan respon nilai JSON dengan kumpulan data todo list', (done) => {
       request(server).get('/api/todo-list')
         .expect(200)
         .end((err, res) => {
@@ -33,8 +33,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /POST route
    */
-  describe('/POST Todos', () => {
-    test('it should POST a book success with message Insert new todo successfuly', (done) => {
+  describe('Melakukan cek POST end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list', () => {
+    test('Proses test ini melakukan call API POST todo-apps-api.apps.playcourt.id/api/todo-list dengan memberikan sebuah data todo list baru dan seharusnya memberikan respon nilai JSON data todo list yang di inputkan dengan pesan "Insert new todo successfuly"', (done) => {
       let todo = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
@@ -55,7 +55,7 @@ describe('### Todos endpoint Testing ###' , () => {
         })
     })
 
-    test('it should not POST a book without description', (done) => {
+    test('Proses test ini melakukan call API POST todo-apps-api.apps.playcourt.id/api/todo-list dengan memberikan sebuah data todo list yang tidak lengkap dan seharusnya memberikan respon nilai JSON dengan pesan "Insert new todo failed"', (done) => {
       let todo = {
         name: 'Todo 2',
         status: 'Next task'
@@ -76,8 +76,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /GET/:id route
    */
-  describe('/GET/:id Todo', () => {
-    it('it should GET a todo by the given id', (done) => {
+  describe('Melakukan cek GET end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list/:id', () => {
+    it('Proses test ini melakukan call API GET todo-apps-api.apps.playcourt.id/api/todo-list/:id dan seharusnya memberikan respon nilai JSON dengan data todo list sesuai ID yang diinputkan', (done) => {
       let todoItem = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
@@ -102,8 +102,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /PUT/ route
    */
-  describe('/PUT/ Todo', () => {
-    it('it should UPDATE a todo given the id', (done) => {
+  describe('Melakukan cek PUT end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list/:id', () => {
+    it('Proses test ini melakukan call API PUT todo-apps-api.apps.playcourt.id/api/todo-list/:id dengan memberikan sebuah data id todo list dan data todo list baru yang akan di update dan seharusnya berhasil melakukan update data dan memberikan respon nilai JSON dengan pesan "Update new todo successfuly"', (done) => {
       let todoItem = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
@@ -136,8 +136,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /PUT/ route
    */
-  describe('/DELETE/ Todo', () => {
-    it('it should DELETE a todo given the id', (done) => {
+  describe('Melakukan cek DELETE end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list/:id', () => {
+    it('Proses test ini melakukan call API DELETE todo-apps-api.apps.playcourt.id/api/todo-list/:id dengan memberikan sebuah data id todo list yang akan di hapus dan seharusnya berhasil melakukan delete data dan memberikan respon nilai JSON dengan pesan "Delete new todo successfuly"', (done) => {
       let todoItem = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
