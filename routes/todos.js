@@ -14,11 +14,11 @@ router.post('/', function (req, res) {
   ToDoList.insertTodo(req, res)
 })
 
-router.put('/', function (req, res) {
+router.put('/:id', function (req, res) {
   ToDoList.updateTodo(req, res)
 })
 
-router.delete('/', function (req, res) {
+router.delete('/:id', function (req, res) {
   ToDoList.deleteTodo(req, res)
 })
 
