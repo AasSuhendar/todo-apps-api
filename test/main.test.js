@@ -3,8 +3,8 @@ process.env.NODE_ENV = 'test'
 let request = require('supertest')
 let server = require('../app')
 
-describe('Melakukan cek end point API' , () => {
-  test('proses test ini seharusnya memberikan respon nilai JSON dengan pesan "Wellcome to TODO Apps API"', (done) => {
+describe('Cek end point API - todo-apps-api.apps.playcourt.id' , () => {
+  test('End point mengembalikan pesan "Wellcome to TODO Apps API"', (done) => {
     var successResponse = {
       status: true,
       code: 'GET-MAIN-ENDPOINT',

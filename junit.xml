@@ -1,16 +1,16 @@
 <testsuites name="jest tests">
-  <testsuite name="### Todos endpoint Testing ###" errors="0" failures="1" skipped="0" timestamp="2018-01-31T06:45:24" time="1.987" tests="6">
-    <testcase classname="### Todos endpoint Testing ### /GET Todos it should GET all todos" name="### Todos endpoint Testing ### /GET Todos it should GET all todos" time="0.847">
+  <testsuite name="Evaluasi API todos" errors="0" failures="1" skipped="0" timestamp="2018-01-31T07:42:11" time="2.292" tests="6">
+    <testcase classname="Evaluasi API todos Meminta Sistem menampilkan seluruh daftar todos Sistem harus mengembalikan daftar todos" name="Evaluasi API todos Meminta Sistem menampilkan seluruh daftar todos Sistem harus mengembalikan daftar todos" time="0.938">
     </testcase>
-    <testcase classname="### Todos endpoint Testing ### /POST Todos it should POST a book success with message Insert new todo successfuly" name="### Todos endpoint Testing ### /POST Todos it should POST a book success with message Insert new todo successfuly" time="0.066">
+    <testcase classname="Evaluasi API todos Membuat Todo baru Sistem menyimpan todo baru dan memberika pesan sukses &quot;Insert new todo successfuly&quot;" name="Evaluasi API todos Membuat Todo baru Sistem menyimpan todo baru dan memberika pesan sukses &quot;Insert new todo successfuly&quot;" time="0.101">
     </testcase>
-    <testcase classname="### Todos endpoint Testing ### /POST Todos it should not POST a book without description" name="### Todos endpoint Testing ### /POST Todos it should not POST a book without description" time="0.019">
+    <testcase classname="Evaluasi API todos Membuat Todo baru Sistem gagal menyimpan todo baru karena data input tidak lengkap dan memberikan pesan gagal &quot;Insert new todo failed&quot;" name="Evaluasi API todos Membuat Todo baru Sistem gagal menyimpan todo baru karena data input tidak lengkap dan memberikan pesan gagal &quot;Insert new todo failed&quot;" time="0.098">
     </testcase>
-    <testcase classname="### Todos endpoint Testing ### /GET/:id Todo it should GET a todo by the given id" name="### Todos endpoint Testing ### /GET/:id Todo it should GET a todo by the given id" time="0.11">
+    <testcase classname="Evaluasi API todos Meminta Sistem menampilkan sebuah todo berdasarkan ID Sistem harus mengembalikan sebuah todo berdasarkan ID" name="Evaluasi API todos Meminta Sistem menampilkan sebuah todo berdasarkan ID Sistem harus mengembalikan sebuah todo berdasarkan ID" time="0.118">
       <failure>Error: expect(object).toHaveProperty(path, value)
 
 Expected the object:
-  {&quot;code&quot;: &quot;GET-TODO&quot;, &quot;data&quot;: {&quot;__v&quot;: 0, &quot;_id&quot;: &quot;5a716606bd71e36142709fd0&quot;, &quot;created_at&quot;: &quot;2018-01-31T06:45:26.359Z&quot;, &quot;description&quot;: &quot;Todo 1 descriptions bla bla&quot;, &quot;name&quot;: &quot;Todo 1&quot;, &quot;status&quot;: &quot;Next task&quot;}, &quot;message&quot;: &quot;Get todo successfuly&quot;, &quot;status&quot;: true}
+  {&quot;code&quot;: &quot;GET-TODO&quot;, &quot;data&quot;: {&quot;__v&quot;: 0, &quot;_id&quot;: &quot;5a717355629bf773c79d3b27&quot;, &quot;created_at&quot;: &quot;2018-01-31T07:42:13.932Z&quot;, &quot;description&quot;: &quot;Todo 1 descriptions bla bla&quot;, &quot;name&quot;: &quot;Todo 1&quot;, &quot;status&quot;: &quot;Next task&quot;}, &quot;message&quot;: &quot;Get todo successfuly&quot;, &quot;status&quot;: true}
 To have a nested property:
   &quot;status&quot;
 With a value of:
@@ -31,13 +31,13 @@ Difference:
     at _combinedTickCallback (internal/process/next_tick.js:135:11)
     at process._tickCallback (internal/process/next_tick.js:180:9)</failure>
     </testcase>
-    <testcase classname="### Todos endpoint Testing ### /PUT/ Todo it should UPDATE a todo given the id" name="### Todos endpoint Testing ### /PUT/ Todo it should UPDATE a todo given the id" time="0.053">
+    <testcase classname="Evaluasi API todos Merubah Todo dengan data berbeda Sistem merubah todo dengan data berbeda dan memberikan pesan sukses &quot;Update new todo successfuly&quot;" name="Evaluasi API todos Merubah Todo dengan data berbeda Sistem merubah todo dengan data berbeda dan memberikan pesan sukses &quot;Update new todo successfuly&quot;" time="0.103">
     </testcase>
-    <testcase classname="### Todos endpoint Testing ### /DELETE/ Todo it should DELETE a todo given the id" name="### Todos endpoint Testing ### /DELETE/ Todo it should DELETE a todo given the id" time="0.092">
+    <testcase classname="Evaluasi API todos Menghapus data Todo Sistem menghapus todo dan memberikan pesan sukses &quot;Delete new todo successfuly&quot;" name="Evaluasi API todos Menghapus data Todo Sistem menghapus todo dan memberikan pesan sukses &quot;Delete new todo successfuly&quot;" time="0.072">
     </testcase>
   </testsuite>
-  <testsuite name="### Main endpoint Testing ###" errors="0" failures="0" skipped="0" timestamp="2018-01-31T06:45:26" time="0.202" tests="1">
-    <testcase classname="### Main endpoint Testing ### it should get json response with message Wellcome to TODO Apps API" name="### Main endpoint Testing ### it should get json response with message Wellcome to TODO Apps API" time="0.046">
+  <testsuite name="Cek end point API - todo-apps-api.apps.playcourt.id" errors="0" failures="0" skipped="0" timestamp="2018-01-31T07:42:14" time="0.17" tests="1">
+    <testcase classname="Cek end point API - todo-apps-api.apps.playcourt.id End point mengembalikan pesan &quot;Wellcome to TODO Apps API&quot;" name="Cek end point API - todo-apps-api.apps.playcourt.id End point mengembalikan pesan &quot;Wellcome to TODO Apps API&quot;" time="0.047">
     </testcase>
   </testsuite>
 </testsuites>

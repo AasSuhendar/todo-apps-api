@@ -4,7 +4,7 @@ let request = require('supertest')
 let server = require('../app')
 let Todo = require('../apps/models/ToDo')
 
-describe('Melakukan cek end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list' , () => {
+describe('Evaluasi API todos' , () => {
 
   beforeEach((done) => {
     Todo.remove({}, (err) => {
@@ -15,8 +15,8 @@ describe('Melakukan cek end point API todos - todo-apps-api.apps.playcourt.id/ap
   /*
    * Test the /GET route
    */
-  describe('Melakukan cek GET end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list', () => {
-    test('Proses test ini melakukan call API GET todo-apps-api.apps.playcourt.id/api/todo-list dan seharusnya memberikan respon nilai JSON dengan kumpulan data todo list', (done) => {
+  describe('Meminta Sistem menampilkan seluruh daftar todos', () => {
+    test('Sistem harus mengembalikan daftar todos', (done) => {
       request(server).get('/api/todo-list')
         .expect(200)
         .end((err, res) => {
@@ -33,8 +33,8 @@ describe('Melakukan cek end point API todos - todo-apps-api.apps.playcourt.id/ap
   /*
    * Test the /POST route
    */
-  describe('Melakukan cek POST end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list', () => {
-    test('Proses test ini melakukan call API POST todo-apps-api.apps.playcourt.id/api/todo-list dengan memberikan sebuah data todo list baru dan seharusnya memberikan respon nilai JSON data todo list yang di inputkan dengan pesan "Insert new todo successfuly"', (done) => {
+  describe('Membuat Todo baru', () => {
+    test('Sistem menyimpan todo baru dan memberika pesan sukses "Insert new todo successfuly"', (done) => {
       let todo = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
@@ -55,7 +55,7 @@ describe('Melakukan cek end point API todos - todo-apps-api.apps.playcourt.id/ap
         })
     })
 
-    test('Proses test ini melakukan call API POST todo-apps-api.apps.playcourt.id/api/todo-list dengan memberikan sebuah data todo list yang tidak lengkap dan seharusnya memberikan respon nilai JSON dengan pesan "Insert new todo failed"', (done) => {
+    test('Sistem gagal menyimpan todo baru karena data input tidak lengkap dan memberikan pesan gagal "Insert new todo failed"', (done) => {
       let todo = {
         name: 'Todo 2',
         status: 'Next task'
@@ -76,8 +76,8 @@ describe('Melakukan cek end point API todos - todo-apps-api.apps.playcourt.id/ap
   /*
    * Test the /GET/:id route
    */
-  describe('Melakukan cek GET end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list/:id', () => {
-    it('Proses test ini melakukan call API GET todo-apps-api.apps.playcourt.id/api/todo-list/:id dan seharusnya memberikan respon nilai JSON dengan data todo list sesuai ID yang diinputkan', (done) => {
+  describe('Meminta Sistem menampilkan sebuah todo berdasarkan ID', () => {
+    it('Sistem harus mengembalikan sebuah todo berdasarkan ID', (done) => {
       let todoItem = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
@@ -102,8 +102,8 @@ describe('Melakukan cek end point API todos - todo-apps-api.apps.playcourt.id/ap
   /*
    * Test the /PUT/ route
    */
-  describe('Melakukan cek PUT end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list/:id', () => {
-    it('Proses test ini melakukan call API PUT todo-apps-api.apps.playcourt.id/api/todo-list/:id dengan memberikan sebuah data id todo list dan data todo list baru yang akan di update dan seharusnya berhasil melakukan update data dan memberikan respon nilai JSON dengan pesan "Update new todo successfuly"', (done) => {
+  describe('Merubah Todo dengan data berbeda', () => {
+    it('Sistem merubah todo dengan data berbeda dan memberikan pesan sukses "Update new todo successfuly"', (done) => {
       let todoItem = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
@@ -136,8 +136,8 @@ describe('Melakukan cek end point API todos - todo-apps-api.apps.playcourt.id/ap
   /*
    * Test the /PUT/ route
    */
-  describe('Melakukan cek DELETE end point API todos - todo-apps-api.apps.playcourt.id/api/todo-list/:id', () => {
-    it('Proses test ini melakukan call API DELETE todo-apps-api.apps.playcourt.id/api/todo-list/:id dengan memberikan sebuah data id todo list yang akan di hapus dan seharusnya berhasil melakukan delete data dan memberikan respon nilai JSON dengan pesan "Delete new todo successfuly"', (done) => {
+  describe('Menghapus data Todo', () => {
+    it('Sistem menghapus todo dan memberikan pesan sukses "Delete new todo successfuly"', (done) => {
       let todoItem = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
