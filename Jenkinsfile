@@ -25,7 +25,6 @@ node('jenkins-agent-nodejs-1') {
             sh 'node -v'
             sh 'npm -v'
         }
-
         stage('Build') {
             echo 'Building Dependency...'
             sh 'npm install'
@@ -36,10 +35,10 @@ node('jenkins-agent-nodejs-1') {
             sh 'npm run bdd'
         }
         
-	    stage('Build In Openshift'){
-            echo 'Build In Openshift...'
-            openshiftBuild(namespace: 'demoplaycourt', buildConfig: 'todo-apps-api', showBuildLogs: 'true')
-        }
+	    // stage('Build In Openshift'){
+        //     echo 'Build In Openshift...'
+        //     openshiftBuild(namespace: 'demoplaycourt', buildConfig: 'todo-apps-api', showBuildLogs: 'true')
+        // }
 	
     }finally{
         stage('Code Coverage'){
