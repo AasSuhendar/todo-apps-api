@@ -1,0 +1,43 @@
+<testsuites name="jest tests">
+  <testsuite name="### Todos endpoint Testing ###" errors="0" failures="1" skipped="0" timestamp="2018-01-31T06:45:24" time="1.987" tests="6">
+    <testcase classname="### Todos endpoint Testing ### /GET Todos it should GET all todos" name="### Todos endpoint Testing ### /GET Todos it should GET all todos" time="0.847">
+    </testcase>
+    <testcase classname="### Todos endpoint Testing ### /POST Todos it should POST a book success with message Insert new todo successfuly" name="### Todos endpoint Testing ### /POST Todos it should POST a book success with message Insert new todo successfuly" time="0.066">
+    </testcase>
+    <testcase classname="### Todos endpoint Testing ### /POST Todos it should not POST a book without description" name="### Todos endpoint Testing ### /POST Todos it should not POST a book without description" time="0.019">
+    </testcase>
+    <testcase classname="### Todos endpoint Testing ### /GET/:id Todo it should GET a todo by the given id" name="### Todos endpoint Testing ### /GET/:id Todo it should GET a todo by the given id" time="0.11">
+      <failure>Error: expect(object).toHaveProperty(path, value)
+
+Expected the object:
+  {&quot;code&quot;: &quot;GET-TODO&quot;, &quot;data&quot;: {&quot;__v&quot;: 0, &quot;_id&quot;: &quot;5a716606bd71e36142709fd0&quot;, &quot;created_at&quot;: &quot;2018-01-31T06:45:26.359Z&quot;, &quot;description&quot;: &quot;Todo 1 descriptions bla bla&quot;, &quot;name&quot;: &quot;Todo 1&quot;, &quot;status&quot;: &quot;Next task&quot;}, &quot;message&quot;: &quot;Get todo successfuly&quot;, &quot;status&quot;: true}
+To have a nested property:
+  &quot;status&quot;
+With a value of:
+  1
+Received:
+  true
+
+Difference:
+
+  Comparing two different types of values. Expected number but received boolean.
+    at Test.request.get.expect.end (/home/aas/Documents/Research/JS Project/todo-apps-api/test/todo.test.js:92:28)
+    at Test.Object.&lt;anonymous&gt;.Test.assert (/home/aas/Documents/Research/JS Project/todo-apps-api/node_modules/supertest/lib/test.js:179:6)
+    at Server.assert (/home/aas/Documents/Research/JS Project/todo-apps-api/node_modules/supertest/lib/test.js:131:12)
+    at Object.onceWrapper (events.js:314:30)
+    at emitNone (events.js:105:13)
+    at Server.emit (events.js:207:7)
+    at emitCloseNT (net.js:1648:8)
+    at _combinedTickCallback (internal/process/next_tick.js:135:11)
+    at process._tickCallback (internal/process/next_tick.js:180:9)</failure>
+    </testcase>
+    <testcase classname="### Todos endpoint Testing ### /PUT/ Todo it should UPDATE a todo given the id" name="### Todos endpoint Testing ### /PUT/ Todo it should UPDATE a todo given the id" time="0.053">
+    </testcase>
+    <testcase classname="### Todos endpoint Testing ### /DELETE/ Todo it should DELETE a todo given the id" name="### Todos endpoint Testing ### /DELETE/ Todo it should DELETE a todo given the id" time="0.092">
+    </testcase>
+  </testsuite>
+  <testsuite name="### Main endpoint Testing ###" errors="0" failures="0" skipped="0" timestamp="2018-01-31T06:45:26" time="0.202" tests="1">
+    <testcase classname="### Main endpoint Testing ### it should get json response with message Wellcome to TODO Apps API" name="### Main endpoint Testing ### it should get json response with message Wellcome to TODO Apps API" time="0.046">
+    </testcase>
+  </testsuite>
+</testsuites>
