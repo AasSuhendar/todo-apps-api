@@ -72,4 +72,94 @@ describe('### Todos endpoint Testing ###' , () => {
         })
     })
   })
+
+  /*
+   * Test the /GET/:id route
+   */
+  describe('/GET/:id Todo', () => {
+    it('it should GET a todo by the given id', (done) => {
+      let todoItem = {
+        name: 'Todo 1',
+        description: 'Todo 1 descriptions bla bla',
+        status: 'Next task'
+      }
+      let newTodo = new Todo(todoItem)
+      newTodo.save((err, todo) => {
+        request(server).get('/api/todo-list/' + todo._id)
+          .expect(200)
+          .end((err, res) => {
+            expect(res.statusCode).toBe(200)
+            expect(res.body).toHaveProperty('message', 'Get todo successfuly')
+            expect(res.body).toHaveProperty('code', 'GET-TODO')
+            expect(res.body).toHaveProperty('status', true)
+            expect(res.body.data).toHaveProperty('name', todo.name)
+            expect(res.body.data).toHaveProperty('description', todo.description)
+            expect(res.body.data).toHaveProperty('status', todo.status)
+            done()
+          })
+      })
+    })
+  })
+
+  /*
+   * Test the /PUT/ route
+   */
+  describe('/PUT/ Todo', () => {
+    it('it should UPDATE a todo given the id', (done) => {
+      let todoItem = {
+        name: 'Todo 1',
+        description: 'Todo 1 descriptions bla bla',
+        status: 'Next task'
+      }
+      let updateTodoItem = {
+        name: 'Todo 1',
+        description: 'Todo 1 descriptions bli bli',
+        status: 'Done'
+      }
+      let newTodo = new Todo(todoItem)
+      newTodo.save((err, todo) => {
+        request(server).put('/api/todo-list/' + todo.id)
+          .send(updateTodoItem)
+          .expect(200)
+          .end((err, res) => {
+            expect(res.statusCode).toBe(200)
+            expect(res.body).toHaveProperty('message', 'Update new todo successfuly')
+            expect(res.body).toHaveProperty('code', 'UPDATE-TODO')
+            expect(res.body).toHaveProperty('status', true)
+            expect(res.body.data).toHaveProperty('name', updateTodoItem.name)
+            expect(res.body.data).toHaveProperty('description', updateTodoItem.description)
+            expect(res.body.data).toHaveProperty('status', updateTodoItem.status)
+            done()
+          })
+      })
+    })
+  })
+
+  /*
+   * Test the /PUT/ route
+   */
+  describe('/DELETE/ Todo', () => {
+    it('it should DELETE a todo given the id', (done) => {
+      let todoItem = {
+        name: 'Todo 1',
+        description: 'Todo 1 descriptions bla bla',
+        status: 'Next task'
+      }
+      let newTodo = new Todo(todoItem)
+      newTodo.save((err, todo) => {
+        request(server).delete('/api/todo-list/' + todo.id)
+          .send(todoItem)
+          .expect(200)
+          .end((err, res) => {
+            expect(res.statusCode).toBe(200)
+            expect(res.body).toHaveProperty('message', 'Delete new todo successfuly')
+            expect(res.body).toHaveProperty('code', 'DELETE-TODO')
+            expect(res.body).toHaveProperty('status', true)
+            expect(res.body.data).toHaveProperty('n', 1)
+            expect(res.body.data).toHaveProperty('ok', 1)
+            done()
+          })
+      })
+    })
+  })
 })

@@ -65,7 +65,7 @@ module.exports = {
     })
   },
   updateTodo: (req, res) => {
-    ToDo.findByIdAndUpdate(req.body._id, {
+    ToDo.findByIdAndUpdate(req.params.id, {
       $set: {
         name: req.body.name,
         description: req.body.description,
@@ -90,7 +90,7 @@ module.exports = {
     })
   },
   deleteTodo: (req, res) => {
-    ToDo.remove({_id: req.body._id}, (err, todo) => {
+    ToDo.remove({_id: req.params.id}, (err, todo) => {
       if (err) {
         res.status(500).json({
           status: false,
