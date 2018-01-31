@@ -33,6 +33,7 @@ node('jenkins-agent-nodejs-1') {
         stage('Testing'){
             echo 'Testing...'
             sh 'npm test'
+            sh 'npm run bdd'
         }
         
 	    stage('Build In Openshift'){
@@ -43,6 +44,7 @@ node('jenkins-agent-nodejs-1') {
     }finally{
         stage('Code Coverage'){
             junit 'junit.xml'
+            step([$class: 'CukedoctorPublisher', featuresDir: '', format: 'HTML', hideFeaturesSection: false, hideScenarioKeyword: false, hideStepTime: false, hideSummary: false, hideTags: false, numbered: true, sectAnchors: true, title: 'Living Documentation', toc: 'RIGHT'])
         }
         stage('SonarQube analysis') {
             def scannerHome = tool 'SonarQube Scanner';

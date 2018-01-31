@@ -1,12 +1,18 @@
-# features/simple_math.feature
+# language: id
 
-Feature: Mengatur Pekerja
-  In order to do maths
-  As a developer
-  I want to increment variables
+Fitur: Todo
+  Untuk mengatur mengatur pekerjaan
+  Sebagai sekertaris 
+  Melani ingin mengatur daftar pekerjaannya
 
-  Scenario: easy maths
-    Given a variable set to 1
-    When I increment the variable by 1
-    Then the variable should contain 2
-
+  Skenario: Membuat pekerjaan baru
+    Dengan Melani memiliki pekerjaan yang harus dimasukan ke sistem dengan judul "Menyiapkan ruang rapat" 
+    Ketika Melani memasukan pekerjaan 
+    """
+    {
+      name: 'Todo 1',
+      description: 'Todo 1 descriptions bla bla',
+      status: 'Next task'
+    }
+    """
+    Maka Sistem menyimpan pekerjaan tersebut dan menampilkan pesan "Sukses Menyimpan Pekerjaan"
