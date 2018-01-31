@@ -4,7 +4,7 @@ let request = require('supertest')
 let server = require('../app')
 let Todo = require('../apps/models/ToDo')
 
-describe('### Todos endpoint Testing ###' , () => {
+describe('Evaluasi API todos' , () => {
 
   beforeEach((done) => {
     Todo.remove({}, (err) => {
@@ -15,8 +15,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /GET route
    */
-  describe('/GET Todos', () => {
-    test('it should GET all todos', (done) => {
+  describe('Meminta Sistem menampilkan seluruh daftar todos', () => {
+    test('Sistem harus mengembalikan daftar todos', (done) => {
       request(server).get('/api/todo-list')
         .expect(200)
         .end((err, res) => {
@@ -33,8 +33,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /POST route
    */
-  describe('/POST Todos', () => {
-    test('it should POST a book success with message Insert new todo successfuly', (done) => {
+  describe('Membuat Todo baru', () => {
+    test('Sistem menyimpan todo baru dan memberika pesan sukses "Insert new todo successfuly"', (done) => {
       let todo = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
@@ -55,7 +55,7 @@ describe('### Todos endpoint Testing ###' , () => {
         })
     })
 
-    test('it should not POST a book without description', (done) => {
+    test('Sistem gagal menyimpan todo baru karena data input tidak lengkap dan memberikan pesan gagal "Insert new todo failed"', (done) => {
       let todo = {
         name: 'Todo 2',
         status: 'Next task'
@@ -76,8 +76,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /GET/:id route
    */
-  describe('/GET/:id Todo', () => {
-    it('it should GET a todo by the given id', (done) => {
+  describe('Meminta Sistem menampilkan sebuah todo berdasarkan ID', () => {
+    it('Sistem harus mengembalikan sebuah todo berdasarkan ID', (done) => {
       let todoItem = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
@@ -89,7 +89,7 @@ describe('### Todos endpoint Testing ###' , () => {
           .expect(200)
           .end((err, res) => {
             expect(res.statusCode).toBe(200)
-            expect(res.body).toHaveProperty('status', 1)
+            expect(res.body).toHaveProperty('status', true)
             expect(res.body.data).toHaveProperty('name', todo.name)
             expect(res.body.data).toHaveProperty('description', todo.description)
             expect(res.body.data).toHaveProperty('status', todo.status)
@@ -102,8 +102,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /PUT/ route
    */
-  describe('/PUT/ Todo', () => {
-    it('it should UPDATE a todo given the id', (done) => {
+  describe('Merubah Todo dengan data berbeda', () => {
+    it('Sistem merubah todo dengan data berbeda dan memberikan pesan sukses "Update new todo successfuly"', (done) => {
       let todoItem = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
@@ -136,8 +136,8 @@ describe('### Todos endpoint Testing ###' , () => {
   /*
    * Test the /PUT/ route
    */
-  describe('/DELETE/ Todo', () => {
-    it('it should DELETE a todo given the id', (done) => {
+  describe('Menghapus data Todo', () => {
+    it('Sistem menghapus todo dan memberikan pesan sukses "Delete new todo successfuly"', (done) => {
       let todoItem = {
         name: 'Todo 1',
         description: 'Todo 1 descriptions bla bla',
