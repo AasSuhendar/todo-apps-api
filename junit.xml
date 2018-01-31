@@ -1,6 +1,14 @@
 <testsuites name="jest tests">
-  <testsuite name="### Main endpoint Testing" errors="0" failures="0" skipped="0" timestamp="2018-01-30T23:26:00" time="4.936" tests="1">
-    <testcase classname="### Main endpoint Testing it should get json response with message Wellcome to TODO Apps API" name="### Main endpoint Testing it should get json response with message Wellcome to TODO Apps API" time="0.022">
+  <testsuite name="### Main endpoint Testing ###" errors="0" failures="0" skipped="0" timestamp="2018-01-31T01:35:25" time="0.601" tests="1">
+    <testcase classname="### Main endpoint Testing ### it should get json response with message Wellcome to TODO Apps API" name="### Main endpoint Testing ### it should get json response with message Wellcome to TODO Apps API" time="0.021">
+    </testcase>
+  </testsuite>
+  <testsuite name="### Todos endpoint Testing ###" errors="0" failures="0" skipped="0" timestamp="2018-01-31T01:35:25" time="3.521" tests="3">
+    <testcase classname="### Todos endpoint Testing ### /GET Todos it should GET all todos" name="### Todos endpoint Testing ### /GET Todos it should GET all todos" time="2.211">
+    </testcase>
+    <testcase classname="### Todos endpoint Testing ### /POST Todos it should POST a book success with message Insert new todo successfuly" name="### Todos endpoint Testing ### /POST Todos it should POST a book success with message Insert new todo successfuly" time="0.274">
+    </testcase>
+    <testcase classname="### Todos endpoint Testing ### /POST Todos it should not POST a book without description" name="### Todos endpoint Testing ### /POST Todos it should not POST a book without description" time="0.23">
     </testcase>
   </testsuite>
 </testsuites>
