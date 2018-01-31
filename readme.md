@@ -1,4 +1,4 @@
-# API-Playcourt
+# API-Todo List
 API Endpoint to Todo List. Please use node js version v8.0.0 or higger.
 
 ## How to run
