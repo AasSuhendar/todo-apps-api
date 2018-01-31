@@ -9,3 +9,7 @@ npm-debug.log
 
 # junit file
 junit.xml
+
+#idea
+.idea
+*.iml
