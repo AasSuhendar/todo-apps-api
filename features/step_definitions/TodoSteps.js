@@ -84,3 +84,34 @@ Then('Sistem menghapus pekerjaan tersebut dan menampilkan pesan {string}', funct
   expect(this.getReturnMessage()).to.equal(string)
   callback()
 })
+
+Given('Melani menginginkan merubah sebuah pekerjaan yang telah dimasukan ke sistem dengan judul {string}', function (title, callback) {
+  this.setToDo(title)
+  expect('Menyiapkan ruang rapat').to.equal(title)
+  callback()
+})
+
+When('Melani memasukan pekerjaan yang akan di rubah:', function (newTodo, callback) {
+  this.newtodo = JSON.parse(newTodo)
+  Todo.findOne({name: this.todo}, (err, todo) => {
+    request(server).put('/api/todo-list/' + todo._id)
+      .send(this.newtodo)
+      .expect(200)
+      .end((err, res) => {
+        this.setReturnMessage(res.body.message)
+        expect(res.statusCode).to.equal(200)
+        expect(res.body).to.have.property('message', 'Update new todo successfuly')
+        expect(res.body).to.have.property('code', 'UPDATE-TODO')
+        expect(res.body).to.have.property('status', true)
+        expect(res.body.data).to.have.property('name', this.newtodo.name)
+        expect(res.body.data).to.have.property('description', this.newtodo.description)
+        expect(res.body.data).to.have.property('status', this.newtodo.status)
+        callback()
+      })
+  })
+})
+
+Then('Sistem merubah pekerjaan tersebut dan menampilkan pesan {string}', function (string, callback) {
+  expect(this.getReturnMessage()).to.equal(string)
+  callback()
+})
