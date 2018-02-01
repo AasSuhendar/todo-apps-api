@@ -33,6 +33,10 @@ class CustomWorld {
     return this.message
   }
 
+  getTodo () {
+    return this.todo
+  }
+
   incrementBy (number) {
     this.variable += number
   }

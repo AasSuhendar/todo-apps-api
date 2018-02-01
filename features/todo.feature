@@ -21,3 +21,8 @@ Fitur: Todo
     Dengan Melani ingin melihat daftar pekerjaannya yang ada di sistem
     Ketika Melani melakukan GET request ke sistem "/api/todo-list"
     Maka Sistem menampilkan daftar pekerjaan tersebut dan menampilkan pesan "Get list todo successfuly"
+  
+  Skenario: Menghapus sebuah pekerjaan
+    Dengan Melani ingin menghapus pekerjaannya yang ada di sistem yang bernama "Menyiapkan ruang rapat"
+    Ketika Melani melakukan DELETE request ke sistem "/api/todo-list/"
+    Maka Sistem menghapus pekerjaan tersebut dan menampilkan pesan "Delete new todo successfuly"
