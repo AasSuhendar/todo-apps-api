@@ -25,7 +25,6 @@ node('jenkins-agent-nodejs-1') {
             sh 'node -v'
             sh 'npm -v'
         }
-
         stage('Build') {
             echo 'Building Dependency...'
             sh 'npm install'
@@ -36,15 +35,15 @@ node('jenkins-agent-nodejs-1') {
             sh 'npm run bdd'
         }
         
-	    stage('Build In Openshift'){
-            echo 'Build In Openshift...'
-            openshiftBuild(namespace: 'demoplaycourt', buildConfig: 'todo-apps-api', showBuildLogs: 'true')
-        }
+	    // stage('Build In Openshift'){
+        //     echo 'Build In Openshift...'
+        //     openshiftBuild(namespace: 'demoplaycourt', buildConfig: 'todo-apps-api', showBuildLogs: 'true')
+        // }
 	
     }finally{
         stage('Code Coverage'){
             junit 'junit.xml'
-            step([$class: 'CukedoctorPublisher', featuresDir: './features/', format: 'HTML', hideFeaturesSection: false, hideScenarioKeyword: false, hideStepTime: false, hideSummary: false, hideTags: false, numbered: true, sectAnchors: true, title: 'Living Documentation', toc: 'RIGHT'])
+            step([$class: 'CukedoctorPublisher', featuresDir: '', format: 'HTML', hideFeaturesSection: false, hideScenarioKeyword: false, hideStepTime: false, hideSummary: false, hideTags: false, numbered: true, sectAnchors: true, title: 'Living Documentation', toc: 'RIGHT'])
         }
         stage('SonarQube analysis') {
             def scannerHome = tool 'SonarQube Scanner';

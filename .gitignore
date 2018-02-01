@@ -9,7 +9,7 @@ npm-debug.log
 
 # junit file
 junit.xml
-
+cucumber.json
 #idea
 .idea
 *.iml
