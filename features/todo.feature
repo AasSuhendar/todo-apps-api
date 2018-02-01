@@ -16,3 +16,8 @@ Fitur: Todo
     }
     """
     Maka Sistem menyimpan pekerjaan tersebut dan menampilkan pesan "Insert new todo successfuly"
+
+  Skenario: Melihat daftar pekerjaan
+    Dengan Melani ingin melihat daftar pekerjaannya yang ada di sistem
+    Ketika Melani melakukan GET request ke sistem "/api/todo-list"
+    Maka Sistem menampilkan daftar pekerjaan tersebut dan menampilkan pesan "Get list todo successfuly"
