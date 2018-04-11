@@ -16,3 +16,5 @@ nodemon
 npm run test
 
 ```
+
+readme updated
