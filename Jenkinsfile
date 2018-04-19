@@ -31,7 +31,7 @@ node('jenkins-agent-nodejs-1') {
         }
         stage('Testing'){
             echo 'Testing...'
-        //    sh 'npm test'
+            sh 'npm test'
             sh 'npm run bdd'
         }
         
