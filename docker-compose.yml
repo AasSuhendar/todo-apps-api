@@ -1,0 +1,36 @@
+version: '3'
+
+volumes:
+  mongodb_data: {}
+
+networks:
+  apinet:
+    driver: bridge
+
+services:
+  mongodb:
+    image: centos/mongodb-32-centos7:3.2
+    networks:
+      - apinet
+    environment:
+      - MONGODB_USER=ibnumasud
+      - MONGODB_PASSWORD=kotewalawala111
+      - MONGODB_ADMIN_PASSWORD=admin
+      - MONGODB_DATABASE=new-playcourt
+    volumes:
+      - mongodb_data:/var/lib/mongodb/data
+    restart: always
+  todoapi:
+    build: .
+    image: aassuhendar/todoapi:latest
+    args:
+      - PROJECT_PATH=$PROJECT_PATH
+    networks:
+      - apinet
+    ports:
+      - 8080
+    environment:
+      - MONGO_URL=mongodb://ibnumasud:kotewalawala111@mongodb/new-playcourt
+    depends_on:
+      - mongodb
+    restart: always
