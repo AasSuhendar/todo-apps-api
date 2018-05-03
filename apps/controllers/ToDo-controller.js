@@ -58,7 +58,7 @@ module.exports = {
         res.status(200).json({
           status: true,
           code: 'INSERT-TODO',
-          message: 'Insert new todo successfuly',
+          message: 'Insert todo successfuly',
           data: todo
         })
       }
