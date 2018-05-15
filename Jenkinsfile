@@ -35,10 +35,11 @@ node('jenkins-agent-nodejs-1') {
             sh 'npm run bdd'
         }
         
-	    // stage('Build In Openshift'){
-        //     echo 'Build In Openshift...'
+	     stage('Build In Openshift'){
+             echo 'Build In Openshift...'
         //     openshiftBuild(namespace: 'demoplaycourt', buildConfig: 'todo-apps-api', showBuildLogs: 'true')
-        // }
+             openshiftBuild(apiURL: 'https://console.playcourt.id', authToken: '_ChYWCV9-HdnWt8bX1G4f8RnIidYN66vchfFBpMNQfQ', bldCfg: 'todo-apps-api', namespace: 'demoplaycourt', showBuildLogs: 'true')    
+         }
 	
     }finally{
         stage('Code Coverage'){
