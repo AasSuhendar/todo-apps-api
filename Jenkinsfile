@@ -40,18 +40,13 @@ def cleanUpDocker() {
 // pipeline declarative
 pipeline {
   parameters {
-    // string(name: 'DEV_KUBE_URL',         description: 'Kubernetes URL for Development',                   defaultValue: '')
-    // string(name: 'DEV_KUBE_TOKEN',       description: 'Kubernetes Token for Development',                 defaultValue: '')
-    // string(name: 'PROD_KUBE_URL',        description: 'Kubernetes URL for Production',                    defaultValue: '')
-    // string(name: 'PROD_KUBE_TOKEN',      description: 'Kubernetes Token for Production',                  defaultValue: '')
-    
-    string(name: 'DOCKER_REGISTRY_URL',   description: 'Docker Registry URL',                             defaultValue: '')
-    string(name: 'DOCKER_REGISTRY_TOKEN', description: 'Docker Registry Token',                           defaultValue: '')
-    string(name: 'DOCKER_REPOSITORY',     description: 'Docker Repository',                               defaultValue: '')
-    string(name: 'DOCKER_IMAGE_NAME',     description: 'Docker Image Name',                               defaultValue: '')
-    string(name: 'DOCKER_IMAGE_TAG',      description: 'Docker Image Tag',                                defaultValue: '')
+    string(name: 'DOCKER_REGISTRY_URL',   description: 'Docker Registry URL',                             defaultValue: 'docker-registry-default.apps.playcourt.id')
+    string(name: 'DOCKER_REGISTRY_TOKEN', description: 'Docker Registry Token',                           defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZW1vcGxheWNvdXJ0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRvY2tlci1wdXNoZXItdG9rZW4tZDJ6dGoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZG9ja2VyLXB1c2hlciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6Ijg5YWExYTI3LTVhNGUtMTFlOC1iZjczLTAwNTA1NjhjMmQ1MiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZW1vcGxheWNvdXJ0OmRvY2tlci1wdXNoZXIifQ.Kz_Uu1auwyYYH6Ko3uY7q56mVZNXScY3GGC3xuOh59gWm5dO_ZWwcO15UXbcNoyOEsa4WB9vrN0HncKAggxoCQQi9YnmxcEoAryCx1jWENuDv42nRUWglrvjEOkr4-jv8M5SUnHrzHAKgnjoYj5nGLzUzjhMukv6zmkRT38PGxLh30Ao5lMt2UWsIvgBu74wFnNehBQoguhxRcz6vX7eBuPL2rHEJx0jN9FSZqkyW9j2emqecL9YckTTPO7SHgcorYAJD8ZxmAD7yLbaMXeKrkDC0fO23nSbpFjdq3nm7jmMB07CwEg5jzkOpNycSznTM5xXgC2Jn1a71JEpNIRaaA')
+    string(name: 'DOCKER_REPOSITORY',     description: 'Docker Repository',                               defaultValue: 'demoplaycourt')
+    string(name: 'DOCKER_IMAGE_NAME',     description: 'Docker Image Name',                               defaultValue: 'todo-apps-api')
+    string(name: 'DOCKER_IMAGE_TAG',      description: 'Docker Image Tag',                                defaultValue: 'latest')
 
-    string(name: 'CONTAINER_PORT',        description: 'Container Port List Seperate with Commas',        defaultValue: '')
+    string(name: 'CONTAINER_PORT',        description: 'Container Port List Seperate with Commas',        defaultValue: '3000')
     string(name: 'CONTAINER_ENV',         description: 'Container Environment List Seperate with Commas', defaultValue: '')
   }
 
@@ -143,7 +138,8 @@ pipeline {
             if (flagCheck == false) {
               echo "Unit Test: Failed, Exiting Pipeline"
               cleanUpWorkspace()
-              
+
+              currentBuild.result = 'FAILURE'
               sh "exit 1"
             } else {
               echo "Unit Test: Success, Continuing Pipline"
@@ -187,6 +183,7 @@ pipeline {
               echo "Containerize: Failed, Exiting Pipeline"
               cleanUpDocker()
 
+              currentBuild.result = 'FAILURE'
               sh "exit 1"
             } else {
               echo "Containerize: Success, Continuing Pipeline"
@@ -253,6 +250,7 @@ pipeline {
                   echo "Container Test: Failed, Exiting Pipeline"
                   cleanUpDocker()
 
+                  currentBuild.result = 'FAILURE'
                   sh "exit 1"
                 } else {
                   echo "Container Test: Success, Continuing Pipeline"
@@ -285,6 +283,7 @@ pipeline {
                   echo "Container Test: Failed, Exiting Pipeline"
                   cleanUpDocker()
 
+                  currentBuild.result = 'FAILURE'
                   sh "exit 1"
                 } else {
                   echo "Container Test: Success, Continuing Pipeline"
@@ -303,13 +302,13 @@ pipeline {
           try {
             flagCheck = false
 
-            echo "Logging-in to Docker Repository ${params.DOCKER_REGISTRY_URL}"
+            echo "Logging-in to Docker Registry"
             sh "docker login --username='${params.DOCKER_REPOSITORY}' --password='${params.DOCKER_REGISTRY_TOKEN}' ${params.DOCKER_REGISTRY_URL}"
 
-            echo "Pushing Image ${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}"
+            echo "Pushing Image to Docker Registry"
             sh "docker push '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
 
-            echo "Logging-out from Docker Repository ${params.DOCKER_REGISTRY_URL}"
+            echo "Logging-out from Docker Registry"
             sh "docker logout ${params.DOCKER_REGISTRY_URL}"
 
             flagCheck = true
@@ -318,6 +317,7 @@ pipeline {
               echo "Pushing Image to Docker Registry: Failed, Exiting Pipeline"
               cleanUpDocker()
 
+              currentBuild.result = 'FAILURE'
               sh "exit 1"
             } else {
               echo "Pushing Image to Docker Registry: Success, Continuing Pipeline"
