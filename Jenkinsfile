@@ -75,7 +75,7 @@ pipeline {
       }
     }
 
-    stage("Check SCM") {
+    stage("Checkout SCM") {
       parallel {
         stage("Agent: NodeJS") {
           agent { label "jenkins-agent-nodejs-1" }
@@ -135,7 +135,7 @@ pipeline {
     }
 
     stage("Containerize") {
-      agent { label "jenkins-agent-dacker-1" }
+      agent { label "jenkins-agent-docker-1" }
       steps {
         script {
           try {
@@ -236,7 +236,7 @@ pipeline {
         script {
           try {
             echo "Logging-in to Docker Repository ${params.DOCKER_REPO_URL}"
-            sh "docker login --username=${params.DOCKER_REPO_USERNAME} --password=${params.DOCKER_REPO_TOKEN} ${params.DOCKER_REPO_URL}"
+            sh "docker login --username='${params.DOCKER_REPO_USERNAME}' --password='${params.DOCKER_REPO_TOKEN} ${params.DOCKER_REPO_URL}'"
 
             echo "Pushing Image ${params.DOCKER_REPO_URL}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}"
             sh "docker push ${params.DOCKER_REPO_URL}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}"
