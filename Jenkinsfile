@@ -23,16 +23,16 @@ def curlRun (url, out) {
 // pipeline declarative
 pipeline {
   parameters {
-    // string(name: 'DEV_KUBE_URL',        description: 'Kubernetes URL for Development',                   defaultValue: '')
-    // string(name: 'DEV_KUBE_TOKEN',      description: 'Kubernetes Token for Development',                 defaultValue: '')
-    // string(name: 'PROD_KUBE_URL',       description: 'Kubernetes URL for Production',                    defaultValue: '')
-    // string(name: 'PROD_KUBE_TOKEN',     description: 'Kubernetes Token for Production',                  defaultValue: '')
+    // string(name: 'DEV_KUBE_URL',         description: 'Kubernetes URL for Development',                   defaultValue: '')
+    // string(name: 'DEV_KUBE_TOKEN',       description: 'Kubernetes Token for Development',                 defaultValue: '')
+    // string(name: 'PROD_KUBE_URL',        description: 'Kubernetes URL for Production',                    defaultValue: '')
+    // string(name: 'PROD_KUBE_TOKEN',      description: 'Kubernetes Token for Production',                  defaultValue: '')
     
-    string(name: 'DOCKER_REPO_URL',      description: 'Docker Repository URL',                           defaultValue: '')
-    string(name: 'DOCKER_REPO_TOKEN',    description: 'Docker Repository Token',                         defaultValue: '')
-    string(name: 'DOCKER_REPO_USERNAME', description: 'Docker Repository Username',                      defaultValue: '')
-    string(name: 'DOCKER_IMAGE_NAME',    description: 'Docker Image Name',                               defaultValue: '')
-    string(name: 'DOCKER_IMAGE_TAG',     description: 'Docker Image Tag',                                defaultValue: '')
+    string(name: 'DOCKER_REGISTRY_URL',   description: 'Docker Registry URL',                             defaultValue: '')
+    string(name: 'DOCKER_REGISTRY_TOKEN', description: 'Docker Registry Token',                           defaultValue: '')
+    string(name: 'DOCKER_REPOSITORY',     description: 'Docker Repository',                               defaultValue: '')
+    string(name: 'DOCKER_IMAGE_NAME',     description: 'Docker Image Name',                               defaultValue: '')
+    string(name: 'DOCKER_IMAGE_TAG',      description: 'Docker Image Tag',                                defaultValue: '')
 
     string(name: 'CONTAINER_PORT',       description: 'Container Port List Seperate with Commas',        defaultValue: '')
     string(name: 'CONTAINER_ENV',        description: 'Container Environment List Seperate with Commas', defaultValue: '')
@@ -125,6 +125,8 @@ pipeline {
 
             if (flagCheck == false) {
               echo "Unit Test: Failed, Exiting Pipeline"
+              deleteDir()
+              
               sh "exit 1"
             } else {
               echo "Unit Test: Success, Continuing Pipline"
@@ -142,7 +144,7 @@ pipeline {
             flagCheck = false
             
             echo "Docker Build Image"
-            sh "docker build -t ${params.DOCKER_REPO_URL}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG} ."
+            sh "docker build -t '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}' ."
 
             echo "Parse Port & Environment Parameter"
             containerPort  = params.CONTAINER_PORT.tokenize(",")
@@ -159,13 +161,17 @@ pipeline {
             println stringEnv
 
             echo "Docker Run Image"
-            sh "docker run -d ${stringPort} ${stringEnv} --name ${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG} --rm ${params.DOCKER_REPO_URL}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}"
+            sh "docker run -d ${stringPort} ${stringEnv} --name '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --rm '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
             sleep 5
 
             flagCheck = true
           } finally {
             if (flagCheck == false) {
               echo "Containerize: Failed, Exiting Pipeline"
+              sh "docker rm -f '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}'"
+              sh "docker rmi -f '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
+              deleteDir()
+
               sh "exit 1"
             } else {
               echo "Containerize: Success, Continuing Pipeline"
@@ -185,7 +191,7 @@ pipeline {
               containerPort.each { portValue ->
                 exposedPort = sh (
                   returnStdout: true,
-                  script: "docker ps -a -f 'name=${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match($i,/${portValue}/);if(tmp){print $i}}}' | cut -d'-' -f1 | cut -d':' -f2"
+                  script: "docker ps -a -f 'name=${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match($i,/${portValue}/);if(tmp){print $i}}}' | cut -d'-' -f1 | cut -d':' -f2"
                 )
 
                 curlRun("127.0.0.1:${exposedPort}", "http_code")
@@ -202,7 +208,7 @@ pipeline {
               containerPort.each { portValue ->
                 exposedPort = sh (
                   returnStdout: true,
-                  script: "docker ps -a -f 'name=${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match($i,/${portValue}/);if(tmp){print $i}}}' | cut -d'-' -f1 | cut -d':' -f2"
+                  script: "docker ps -a -f 'name=${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match($i,/${portValue}/);if(tmp){print $i}}}' | cut -d'-' -f1 | cut -d':' -f2"
                 )
 
                 curlRun("127.0.0.1:${exposedPort}", "time_total")
@@ -219,7 +225,7 @@ pipeline {
               containerPort.each { portValue ->
                 exposedPort = sh (
                   returnStdout: true,
-                  script: "docker ps -a -f 'name=${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match($i,/${portValue}/);if(tmp){print $i}}}' | cut -d'-' -f1 | cut -d':' -f2"
+                  script: "docker ps -a -f 'name=${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match($i,/${portValue}/);if(tmp){print $i}}}' | cut -d'-' -f1 | cut -d':' -f2"
                 )
 
                 curlRun("127.0.0.1:${exposedPort}", "size_download")
@@ -235,14 +241,14 @@ pipeline {
       steps {
         script {
           try {
-            echo "Logging-in to Docker Repository ${params.DOCKER_REPO_URL}"
-            sh "docker login --username='${params.DOCKER_REPO_USERNAME}' --password='${params.DOCKER_REPO_TOKEN} ${params.DOCKER_REPO_URL}'"
+            echo "Logging-in to Docker Repository ${params.DOCKER_REGISTRY_URL}"
+            sh "docker login --username='${params.DOCKER_REPOSITORY}' --password='${params.DOCKER_REGISTRY_TOKEN}' ${params.DOCKER_REGISTRY_URL}'"
 
-            echo "Pushing Image ${params.DOCKER_REPO_URL}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}"
-            sh "docker push ${params.DOCKER_REPO_URL}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}"
+            echo "Pushing Image ${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}"
+            sh "docker push '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
 
-            echo "Logging-out from Docker Repository ${params.DOCKER_REPO_URL}"
-            sh "docker logout ${params.DOCKER_REPO_URL}"
+            echo "Logging-out from Docker Repository ${params.DOCKER_REGISTRY_URL}"
+            sh "docker logout ${params.DOCKER_REGISTRY_URL}"
           } catch(e) {
             throw e
           }
@@ -257,7 +263,7 @@ pipeline {
           steps {
             script {
               echo "Cleaning-up Environment"
-              deleteDir()              
+              deleteDir()
             }
           }
         }
@@ -267,8 +273,8 @@ pipeline {
           steps {
             script {
               echo "Cleaning-up Environment"
-              sh "docker rm -f ${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}"
-              sh "docker rmi -f ${params.DOCKER_REPO_URL}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}"
+              sh "docker rm -f '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}'"
+              sh "docker rmi -f '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
               deleteDir()
             }
           }
