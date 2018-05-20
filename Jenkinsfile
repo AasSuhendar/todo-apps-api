@@ -4,7 +4,7 @@ def containerPort = ""
 def containerEnv  = ""
 
 // curl helper functiom
-def curlRun (url, out) {
+def curlRun(url, out) {
   script {
     if (out.equals('')) {
       out = 'http_code'
@@ -18,6 +18,23 @@ def curlRun (url, out) {
 
     echo "Result of (${out}): ${result}"
   }
+}
+
+// workspace cleaner helper function
+def cleanUpWorkspace() {
+  script {
+    deleteDir()
+  }
+}
+
+// docker cleaner helper function
+def cleanUpDocker() {
+  script {
+    sh "docker stop '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}'"
+    sh "docker rm -f '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}'"
+    sh "docker rmi -f '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
+    cleanUpWorkspace()
+  }  
 }
 
 // pipeline declarative
@@ -34,8 +51,8 @@ pipeline {
     string(name: 'DOCKER_IMAGE_NAME',     description: 'Docker Image Name',                               defaultValue: '')
     string(name: 'DOCKER_IMAGE_TAG',      description: 'Docker Image Tag',                                defaultValue: '')
 
-    string(name: 'CONTAINER_PORT',       description: 'Container Port List Seperate with Commas',        defaultValue: '')
-    string(name: 'CONTAINER_ENV',        description: 'Container Environment List Seperate with Commas', defaultValue: '')
+    string(name: 'CONTAINER_PORT',        description: 'Container Port List Seperate with Commas',        defaultValue: '')
+    string(name: 'CONTAINER_ENV',         description: 'Container Environment List Seperate with Commas', defaultValue: '')
   }
 
   agent none
@@ -47,7 +64,7 @@ pipeline {
           steps {
             script {
               echo "Cleaning-up Environment"
-              deleteDir()
+              cleanUpWorkspace()
 
               echo "Setting-up Environment"
               def node = tool name: 'NodeJS-8.9', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
@@ -65,7 +82,7 @@ pipeline {
           steps {
             script {
               echo "Cleaning-up Environment"
-              deleteDir()
+              cleanUpDocker()
 
               echo "Checking-up Environment"
               sh 'docker --version'
@@ -125,7 +142,7 @@ pipeline {
 
             if (flagCheck == false) {
               echo "Unit Test: Failed, Exiting Pipeline"
-              deleteDir()
+              cleanUpWorkspace()
               
               sh "exit 1"
             } else {
@@ -148,12 +165,12 @@ pipeline {
 
             echo "Parse Port & Environment Parameter"
             containerPort  = params.CONTAINER_PORT.tokenize(",")
-            def stringPort    = ""            
+            def stringPort = ""            
             containerPort.each { portValue ->
               stringPort  += "-p :${portValue} "
             }
             println stringPort
-            def stringEnv     = ""
+            def stringEnv  = ""
             containerEnv   = params.CONTAINER_ENV.tokenize(",")
             containerEnv.each { envValue ->
               stringEnv   += "-e ${envValue} "
@@ -168,9 +185,7 @@ pipeline {
           } finally {
             if (flagCheck == false) {
               echo "Containerize: Failed, Exiting Pipeline"
-              sh "docker rm -f '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}'"
-              sh "docker rmi -f '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
-              deleteDir()
+              cleanUpDocker()
 
               sh "exit 1"
             } else {
@@ -185,16 +200,31 @@ pipeline {
       parallel {
         stage("Get http_code") {
           agent { label "jenkins-agent-docker-1" }
-          steps {  
+          steps {
             script {
-              def exposedPort = ""
-              containerPort.each { portValue ->
-                exposedPort = sh (
-                  returnStdout: true,
-                  script: "docker ps -a -f 'name=${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match($i,/${portValue}/);if(tmp){print $i}}}' | cut -d'-' -f1 | cut -d':' -f2"
-                )
+              try {
+                flagCheck = false
+                
+                def exposedPort = ""
+                containerPort.each { portValue ->
+                  exposedPort = sh (
+                    returnStdout: true,
+                    script: "docker ps -a -f 'name=${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2"
+                  )
 
-                curlRun("127.0.0.1:${exposedPort}", "http_code")
+                  curlRun("127.0.0.1:${exposedPort}", "http_code")
+                }
+
+                flagCheck = true
+              } finally {
+                if (flagCheck == false) {
+                  echo "Container Test: Failed, Exiting Pipeline"
+                  cleanUpDocker()
+
+                  sh "exit 1"
+                } else {
+                  echo "Container Test: Success, Continuing Pipeline"
+                }
               }
             }
           }
@@ -204,14 +234,29 @@ pipeline {
           agent { label "jenkins-agent-docker-1" }
           steps {
             script {
-              def exposedPort = ""
-              containerPort.each { portValue ->
-                exposedPort = sh (
-                  returnStdout: true,
-                  script: "docker ps -a -f 'name=${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match($i,/${portValue}/);if(tmp){print $i}}}' | cut -d'-' -f1 | cut -d':' -f2"
-                )
+              try {
+                flagCheck = false                
+                
+                def exposedPort = ""
+                containerPort.each { portValue ->
+                  exposedPort = sh (
+                    returnStdout: true,
+                    script: "docker ps -a -f 'name=${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2"
+                  )
 
-                curlRun("127.0.0.1:${exposedPort}", "time_total")
+                  curlRun("127.0.0.1:${exposedPort}", "time_total")
+                }
+
+                flagCheck = true
+              } finally {
+                if (flagCheck == false) {
+                  echo "Container Test: Failed, Exiting Pipeline"
+                  cleanUpDocker()
+
+                  sh "exit 1"
+                } else {
+                  echo "Container Test: Success, Continuing Pipeline"
+                }
               }
             }
           }
@@ -219,16 +264,31 @@ pipeline {
 
         stage("Get size_download") {
           agent { label "jenkins-agent-docker-1" }
-          steps {  
+          steps {
             script {
-              def exposedPort = ""
-              containerPort.each { portValue ->
-                exposedPort = sh (
-                  returnStdout: true,
-                  script: "docker ps -a -f 'name=${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match($i,/${portValue}/);if(tmp){print $i}}}' | cut -d'-' -f1 | cut -d':' -f2"
-                )
+              try {
+                flagCheck = false
+                
+                def exposedPort = ""
+                containerPort.each { portValue ->
+                  exposedPort = sh (
+                    returnStdout: true,
+                    script: "docker ps -a -f 'name=${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2"
+                  )
 
-                curlRun("127.0.0.1:${exposedPort}", "size_download")
+                  curlRun("127.0.0.1:${exposedPort}", "size_download")
+                }
+                
+                flagCheck = true
+              } finally {
+                if (flagCheck == false) {
+                  echo "Container Test: Failed, Exiting Pipeline"
+                  cleanUpDocker()
+
+                  sh "exit 1"
+                } else {
+                  echo "Container Test: Success, Continuing Pipeline"
+                }
               }
             }
           }
@@ -263,7 +323,7 @@ pipeline {
           steps {
             script {
               echo "Cleaning-up Environment"
-              deleteDir()
+              cleanUpWorkspace()
             }
           }
         }
@@ -273,9 +333,7 @@ pipeline {
           steps {
             script {
               echo "Cleaning-up Environment"
-              sh "docker rm -f '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}'"
-              sh "docker rmi -f '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
-              deleteDir()
+              cleanUpDocker()
             }
           }
         }
