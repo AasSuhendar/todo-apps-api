@@ -43,9 +43,8 @@ pipeline {
     stage("Initialize") {
       parallel {
         stage("Agent: NodeJS") {
+          agent { label "jenkins-agent-nodejs-1" }
           steps {
-            agent { label "jenkins-agent-nodejs-1" }
-
             script {
               echo "Cleaning-up Environment"
               deleteDir()
@@ -62,9 +61,8 @@ pipeline {
         }
 
         stage("Agent: Docker") {
+          agent { label "jenkins-agent-docker-1" }
           steps {
-            agent { label "jenkins-agent-docker-1" }
-
             script {
               echo "Cleaning-up Environment"
               deleteDir()
@@ -80,9 +78,8 @@ pipeline {
     stage("Check SCM") {
       parallel {
         stage("Agent: NodeJS") {
-          steps {
-            agent { label "jenkins-agent-nodejs-1" }
-            
+          agent { label "jenkins-agent-nodejs-1" }
+          steps {            
             script {
               echo "Checking-out SCM"
               checkout scm              
@@ -91,9 +88,8 @@ pipeline {
         }
 
         stage("Agent: Docker") {
+          agent { label "jenkins-agent-docker-1" }
           steps {
-            agent { label "jenkins-agent-docker-1" }
-
             script {
               echo "Checking-out SCM"
               checkout scm              
@@ -104,9 +100,8 @@ pipeline {
     }
 
     stage("Unit Test & Analysis") {
+      agent { label "jenkins-agent-nodejs-1" }
       steps {
-        agent { label "jenkins-agent-nodejs-1" }
-
         script {
           try {
             flagCheck = false
@@ -140,9 +135,8 @@ pipeline {
     }
 
     stage("Containerize") {
+      agent { label "jenkins-agent-dacker-1" }
       steps {
-        agent { label "jenkins-agent-dacker-1" }
-
         script {
           try {
             flagCheck = false
@@ -184,9 +178,8 @@ pipeline {
     stage("Container Test") {
       parallel {
         stage("Get http_code") {
-          steps {
-            agent { label "jenkins-agent-docker-1" }
-            
+          agent { label "jenkins-agent-docker-1" }
+          steps {  
             script {
               def exposedPort = ""
               containerPort.each { portValue ->
@@ -202,9 +195,8 @@ pipeline {
         }
 
         stage("Get time_total") {
+          agent { label "jenkins-agent-docker-1" }
           steps {
-            agent { label "jenkins-agent-docker-1" }
-
             script {
               def exposedPort = ""
               containerPort.each { portValue ->
@@ -220,9 +212,8 @@ pipeline {
         }
 
         stage("Get size_download") {
-          steps {
-            agent { label "jenkins-agent-docker-1" }
-            
+          agent { label "jenkins-agent-docker-1" }
+          steps {  
             script {
               def exposedPort = ""
               containerPort.each { portValue ->
@@ -240,9 +231,8 @@ pipeline {
     }
 
     stage("Pushing Image to Docker Registry") {
+      agent { label "jenkins-agent-docker-1" }
       steps {
-        agent { label "jenkins-agent-docker-1" }
-
         script {
           try {
             echo "Logging-in to Docker Repository ${params.DOCKER_REPO_URL}"
@@ -263,6 +253,7 @@ pipeline {
     stage("Finalize") {
       parallel {
         stage("Agent: NodeJS") {
+          agent { label "jenkins-agent-nodejs-1" }
           steps {
             script {
               echo "Cleaning-up Environment"
@@ -272,6 +263,7 @@ pipeline {
         }
 
         stage("Agent: Docker") {
+          agent { label "jenkins-agent-docker-1" }
           steps {
             script {
               echo "Cleaning-up Environment"
