@@ -134,8 +134,6 @@ pipeline {
             } else {
               echo "Unit Test: Success, Continuing Pipline"
             }
-          } catch(e) {
-            throw e
           }
         }
       }
