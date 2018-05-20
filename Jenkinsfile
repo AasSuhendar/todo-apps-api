@@ -134,8 +134,6 @@ pipline {
             } else {
               echo "Unit Test: Success, Continuing Pipline"
             }
-          } catch(e) {
-            throw e
           }
         }
       }
@@ -178,8 +176,6 @@ pipline {
             } else {
               echo "Containerize: Success, Continuing Pipeline"
             }
-          } catch(e) {
-            throw e
           }
         }
       }
@@ -226,7 +222,7 @@ pipline {
         stage("Get size_download") {
           steps {
             agent { node { label "jenkins-agent-docker-1" } }
-
+            
             script {
               def exposedPort = ""
               containerPort.each { portValue ->
