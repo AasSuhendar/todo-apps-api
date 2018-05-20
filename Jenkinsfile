@@ -30,9 +30,9 @@ def cleanUpWorkspace() {
 // docker cleaner helper function
 def cleanUpDocker() {
   script {
-    sh "docker stop '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}'"
-    sh "docker rm -f '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}'"
-    sh "docker rmi -f '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
+    sh "docker stop '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' || true"
+    sh "docker rm -f '${params.DOCKER_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' || true"
+    sh "docker rmi -f '${params.DOCKER_REGISTRY_URL}/${params.DOCKER_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}' || true"
     cleanUpWorkspace()
   }  
 }
@@ -301,6 +301,8 @@ pipeline {
       steps {
         script {
           try {
+            flagCheck = false
+
             echo "Logging-in to Docker Repository ${params.DOCKER_REGISTRY_URL}"
             sh "docker login --username='${params.DOCKER_REPOSITORY}' --password='${params.DOCKER_REGISTRY_TOKEN}' ${params.DOCKER_REGISTRY_URL}'"
 
@@ -309,8 +311,17 @@ pipeline {
 
             echo "Logging-out from Docker Repository ${params.DOCKER_REGISTRY_URL}"
             sh "docker logout ${params.DOCKER_REGISTRY_URL}"
-          } catch(e) {
-            throw e
+
+            flagCheck = true
+          } finally {
+            if (flagCheck == false) {
+              echo "Pushing Image to Docker Registry: Failed, Exiting Pipeline"
+              cleanUpDocker()
+
+              sh "exit 1"
+            } else {
+              echo "Pushing Image to Docker Registry: Success, Continuing Pipeline"
+            }
           }
         }
       }
