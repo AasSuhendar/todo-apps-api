@@ -28,13 +28,13 @@ pipeline {
     // string(name: 'PROD_KUBE_URL',       description: 'Kubernetes URL for Production',                    defaultValue: '')
     // string(name: 'PROD_KUBE_TOKEN',     description: 'Kubernetes Token for Production',                  defaultValue: '')
     
-    string(name: 'DOCKER_REPO_URL',      description: 'Docker Repository URL',                           defaultValue: 'docker-registry-default.apps.playcourt.id')
+    string(name: 'DOCKER_REPO_URL',      description: 'Docker Repository URL',                           defaultValue: '')
     string(name: 'DOCKER_REPO_TOKEN',    description: 'Docker Repository Token',                         defaultValue: '')
     string(name: 'DOCKER_REPO_USERNAME', description: 'Docker Repository Username',                      defaultValue: '')
-    string(name: 'DOCKER_IMAGE_NAME',    description: 'Docker Image Name',                               defaultValue: 'todo-apps-api')
-    string(name: 'DOCKER_IMAGE_TAG',     description: 'Docker Image Tag',                                defaultValue: 'latest')
+    string(name: 'DOCKER_IMAGE_NAME',    description: 'Docker Image Name',                               defaultValue: '')
+    string(name: 'DOCKER_IMAGE_TAG',     description: 'Docker Image Tag',                                defaultValue: '')
 
-    string(name: 'CONTAINER_PORT',       description: 'Container Port List Seperate with Commas',        defaultValue: '3000')
+    string(name: 'CONTAINER_PORT',       description: 'Container Port List Seperate with Commas',        defaultValue: '')
     string(name: 'CONTAINER_ENV',        description: 'Container Environment List Seperate with Commas', defaultValue: '')
   }
 
@@ -81,7 +81,7 @@ pipeline {
       parallel {
         stage("Agent: NodeJS") {
           steps {
-            agent { label "jenkins-agent-nodejs-1"} }
+            agent { label "jenkins-agent-nodejs-1" }
             
             script {
               echo "Checking-out SCM"
@@ -92,7 +92,7 @@ pipeline {
 
         stage("Agent: Docker") {
           steps {
-            agent { label "jenkins-agent-docker-1"} }
+            agent { label "jenkins-agent-docker-1" }
 
             script {
               echo "Checking-out SCM"
@@ -241,7 +241,7 @@ pipeline {
 
     stage("Pushing Image to Docker Registry") {
       steps {
-        agent { label "jenkins-agent-docker-1"} }
+        agent { label "jenkins-agent-docker-1" }
 
         script {
           try {
