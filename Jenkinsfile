@@ -21,7 +21,7 @@ def curlRun (url, out) {
 }
 
 // pipeline declarative
-pipline {
+pipeline {
   parameters {
     // string(name: 'DEV_KUBE_URL',        description: 'Kubernetes URL for Development',                   defaultValue: '')
     // string(name: 'DEV_KUBE_TOKEN',      description: 'Kubernetes Token for Development',                 defaultValue: '')
@@ -134,6 +134,8 @@ pipline {
             } else {
               echo "Unit Test: Success, Continuing Pipline"
             }
+          } catch(e) {
+            throw e
           }
         }
       }
