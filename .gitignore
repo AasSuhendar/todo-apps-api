@@ -13,3 +13,4 @@ cucumber.json
 #idea
 .idea
 *.iml
+.env
