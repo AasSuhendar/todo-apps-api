@@ -314,7 +314,7 @@ pipeline {
             flagCheck = false
 
             echo "Run Integration Test"
-            sh "docker exec ${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG} npm integration"
+            sh "docker exec ${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG} npm run integration"
             
             flagCheck = true
           } finally {
