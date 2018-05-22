@@ -477,7 +477,7 @@ pipeline {
               sh "${kubeCMD} project ${params.KUBE_DEV_NAMESPACE}"
 
               echo "Tagging Image Stream Tag with Git Tag Name in Kubernetes Environment"
-              sh "${kubeCMD} tag ${params.DOCKER_DEV_IMAGE_NAME}:${gitTagName} ${params.DOCKER_DEV_IMAGE_NAME}:${gitTagName}"
+              sh "${kubeCMD} tag ${params.DOCKER_DEV_IMAGE_NAME}:${gitTagName} ${params.DOCKER_IMAGE_NAME}:${gitTagName}"
 
               echo "Logging-out from Kubernetes Environment"
               sh "${kubeCMD} logout ${params.KUBE_DEV_URL}"
