@@ -125,7 +125,7 @@ pipeline {
               echo "Get Latest Git Tag Name"
               gitTagName = sh (
                 returnStdout: true,
-                script: "git tag -l "*rc*" | cat | tail -n 1"
+                script: "git tag -l '*rc*' | cat | tail -n 1"
               )
 
               echo "Match Git HEAD with Latest Git Tag Name"
@@ -154,7 +154,7 @@ pipeline {
               echo "Get Latest Git Tag Name"
               gitTagName = sh (
                 returnStdout: true,
-                script: "git tag -l "*rc*" | cat | tail -n 1"
+                script: "git tag -l '*rc*' | cat | tail -n 1"
               )
 
               echo "Match Git HEAD with Latest Git Tag Name"
