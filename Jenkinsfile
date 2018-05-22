@@ -403,7 +403,7 @@ pipeline {
 
             if (gitHeadMatch) {
               echo "Creating Image Tag With Git Tag Name"
-              sh "docker tag ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_DEV_IMAGE_NAME}:${params.DOCKER_DEV_IMAGE_TAG} ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_DEV_IMAGE_NAME}:${gitTagName}"              
+              sh "docker tag ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG} ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}"
             } else {
               echo "Creating Image Tag With Git Tag Name: Skipping, Git Master HEAD Not Equal With Git Latest Tag HEAD"
             }
