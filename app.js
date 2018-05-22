@@ -21,6 +21,7 @@ app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
   next()
 })
+
 if (process.env.NODE_ENV === 'test') {
   mongoose.connect(env.database_test)
   mongoose.connection.on('connected', function () {})
@@ -30,6 +31,7 @@ if (process.env.NODE_ENV === 'test') {
   })
   app.use(logger('dev'))
 }
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/', index)
