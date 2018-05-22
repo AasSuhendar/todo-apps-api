@@ -1,7 +1,9 @@
 // global variable
 def flagCheck     = false
+def gitTagName    = ""
 def containerPort = ""
 def containerEnv  = ""
+def kubeCMD       = ""
 
 // curl helper functiom
 def curlRun(url, out="") {
@@ -47,12 +49,12 @@ def cleanUpDocker(containerName="", imageName="") {
 pipeline {
   parameters {
     booleanParam(name: 'KUBE_DEV_IS_OC',       description: 'Kubernetes Development is OpenShift',               defaultValue: true)    
-    string(name: 'KUBE_DEV_URL',               description: 'Kubernetes Development URL',                        defaultValue: '')
-    string(name: 'KUBE_DEV_TOKEN',             description: 'Kubernetes Development Token',                      defaultValue: '')
+    string(name: 'KUBE_DEV_URL',               description: 'Kubernetes Development URL',                        defaultValue: 'https://console.playcourt.id')
+    string(name: 'KUBE_DEV_TOKEN',             description: 'Kubernetes Development Token',                      defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZW1vcGxheWNvdXJ0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtZXh0LXRva2VuLXdqZHI1Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImplbmtpbnMtZXh0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiZDQxYzJkMzEtNThkOC0xMWU4LWFmZmMtMDA1MDU2OGM0YzQyIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmRlbW9wbGF5Y291cnQ6amVua2lucy1leHQifQ.VuxG9HDqW6yFoP_rVq0TxP1bzfGtVoH5EMqaz4tBJdQUajOvmrjJmFSrXkrp5RLfNOGdab7oNU4xLt1wgeNRMxwTsBOHDPLLAabxWA6bkRdysNHoMjFL0f0rwKHdEncmMEtoXpM0bp3Rss1FIpYDKb0LwHCbDMyaw6u3ZxvnYIAWeLN3_aB4DyHpwJkDIO8xH9rJKDKMq-8v2DpDCxDmqt1Y71Q6nksNMfBrRF-d0c1xxynUuXIZhiXuogCEypX3bnOYr576eSSH-_4xQX2jSD-xwPKTp9qa60IYHzSEqDYfRBZpTYyGZBZVGYs4lZdhCjrt8FsfvlCXdvu4coDMbw')
+    string(name: 'KUBE_DEV_NAMESPACE',         description: 'Kubernetes Development Namespace',                  defaultValue: 'demoplaycourt')
     
     string(name: 'DOCKER_DEV_REGISTRY_URL',    description: 'Docker Development Registry URL',                   defaultValue: 'docker-registry-default.apps.playcourt.id')
     string(name: 'DOCKER_DEV_REGISTRY_TOKEN',  description: 'Docker Development Registry Token',                 defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZW1vcGxheWNvdXJ0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRvY2tlci1wdXNoZXItdG9rZW4tZDJ6dGoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZG9ja2VyLXB1c2hlciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6Ijg5YWExYTI3LTVhNGUtMTFlOC1iZjczLTAwNTA1NjhjMmQ1MiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZW1vcGxheWNvdXJ0OmRvY2tlci1wdXNoZXIifQ.Kz_Uu1auwyYYH6Ko3uY7q56mVZNXScY3GGC3xuOh59gWm5dO_ZWwcO15UXbcNoyOEsa4WB9vrN0HncKAggxoCQQi9YnmxcEoAryCx1jWENuDv42nRUWglrvjEOkr4-jv8M5SUnHrzHAKgnjoYj5nGLzUzjhMukv6zmkRT38PGxLh30Ao5lMt2UWsIvgBu74wFnNehBQoguhxRcz6vX7eBuPL2rHEJx0jN9FSZqkyW9j2emqecL9YckTTPO7SHgcorYAJD8ZxmAD7yLbaMXeKrkDC0fO23nSbpFjdq3nm7jmMB07CwEg5jzkOpNycSznTM5xXgC2Jn1a71JEpNIRaaA')
-    string(name: 'DOCKER_DEV_REPOSITORY',      description: 'Docker Development Repository',                     defaultValue: 'demoplaycourt')
 
     string(name: 'DOCKER_IMAGE_NAME',          description: 'Docker Image Name',                                 defaultValue: 'todo-apps-api')
     string(name: 'DOCKER_IMAGE_TAG',           description: 'Docker Image Tag',                                  defaultValue: 'latest')
@@ -77,8 +79,9 @@ pipeline {
               env.PATH = "${node}/bin:${env.PATH}"
 
               echo "Checking-up Environment"
-              sh 'node -v'
-              sh 'npm -v'
+              sh "git --version"
+              sh "node --version"
+              sh "npm --version"
             }
           }
         }
@@ -88,10 +91,20 @@ pipeline {
           steps {
             script {
               echo "Cleaning-up Environment"
-              cleanUpDocker("${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
 
+              echo "Setting-up Environment"
+              if (${params.KUBE_DEV_IS_OC}) {
+                kubeCMD = "oc"
+              } else {
+                kubeCMD = "kubectl"
+              }
+              
               echo "Checking-up Environment"
-              sh 'docker --version'
+              sh "git --version"
+              sh "docker --version"
+              sh "${kubeCMD} version"
             }
           }
         }
@@ -105,7 +118,13 @@ pipeline {
           steps {            
             script {
               echo "Checking-out SCM"
-              checkout scm              
+              checkout scm
+
+              echo "Get Latest Git Tag Name"
+              gitTagName = sh (
+                returnStdout: true,
+                script: "git tag -l "*rc*" | cat | tail -n 1"
+              )
             }
           }
         }
@@ -115,7 +134,13 @@ pipeline {
           steps {
             script {
               echo "Checking-out SCM"
-              checkout scm              
+              checkout scm
+
+              echo "Get Latest Git Tag Name"
+              gitTagName = sh (
+                returnStdout: true,
+                script: "git tag -l "*rc*" | cat | tail -n 1"
+              )
             }
           }
         }
@@ -168,7 +193,7 @@ pipeline {
             flagCheck = false
             
             echo "Docker Build Image"
-            sh "docker build -t '${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}' ."
+            sh "docker build -t '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}' ."
 
             echo "Parse Port & Environment Parameter"
             containerPort  = params.CONTAINER_PORT.tokenize(",")
@@ -185,14 +210,14 @@ pipeline {
             println stringEnv
 
             echo "Docker Run Image"
-            sh "docker run -d ${stringPort} ${stringEnv} --name '${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --rm '${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
+            sh "docker run -d ${stringPort} ${stringEnv} --name '${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --rm '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
             sleep 5
 
             flagCheck = true
           } finally {
             if (flagCheck == false) {
               echo "Containerize: Failed, Exiting Pipeline"
-              cleanUpDocker("${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
 
               currentBuild.result = 'FAILURE'
               sh "exit 1"
@@ -217,7 +242,7 @@ pipeline {
                 containerPort.each { portValue ->
                   exposedPort = sh (
                     returnStdout: true,
-                    script: "docker ps -a -f 'name=${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2"
+                    script: "docker ps -a -f 'name=${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2"
                   )
 
                   curlRun("127.0.0.1:${exposedPort}", "http_code")
@@ -227,7 +252,7 @@ pipeline {
               } finally {
                 if (flagCheck == false) {
                   echo "Container Test: Failed, Exiting Pipeline"
-                  cleanUpDocker("${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+                  cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
 
                   sh "exit 1"
                 } else {
@@ -249,7 +274,7 @@ pipeline {
                 containerPort.each { portValue ->
                   exposedPort = sh (
                     returnStdout: true,
-                    script: "docker ps -a -f 'name=${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2"
+                    script: "docker ps -a -f 'name=${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2"
                   )
 
                   curlRun("127.0.0.1:${exposedPort}", "time_total")
@@ -259,7 +284,7 @@ pipeline {
               } finally {
                 if (flagCheck == false) {
                   echo "Container Test: Failed, Exiting Pipeline"
-                  cleanUpDocker("${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+                  cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
 
                   currentBuild.result = 'FAILURE'
                   sh "exit 1"
@@ -282,7 +307,7 @@ pipeline {
                 containerPort.each { portValue ->
                   exposedPort = sh (
                     returnStdout: true,
-                    script: "docker ps -a -f 'name=${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2"
+                    script: "docker ps -a -f 'name=${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2"
                   )
 
                   curlRun("127.0.0.1:${exposedPort}", "size_download")
@@ -292,7 +317,7 @@ pipeline {
               } finally {
                 if (flagCheck == false) {
                   echo "Container Test: Failed, Exiting Pipeline"
-                  cleanUpDocker("${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+                  cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
 
                   currentBuild.result = 'FAILURE'
                   sh "exit 1"
@@ -314,51 +339,130 @@ pipeline {
             flagCheck = false
 
             echo "Run Integration Test"
-            sh "docker exec ${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG} npm run integration"
+            sh "docker exec ${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG} npm run integration"
             
             flagCheck = true
           } finally {
             if (flagCheck == false) {
               echo "Integration Test: Failed, Exiting Pipeline"
-              cleanUpDocker("${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
 
               currentBuild.result = 'FAILURE'
               sh "exit 1"
             } else {
-              echo "Integration: Success, Continuing Pipeline"
+              echo "Integration Test: Success, Continuing Pipeline"
             }
           }
         }
       }
     }
 
-    stage("Pushing Image to Docker Development Registry") {
+    stage("Creating Image Tag With Git Tag Name") {
+      agent { label "jenkins-agent-docker-1"}
+      steps {
+        script {
+          try {
+            flagCheck = false
+
+            echo "Cleaning-up Docker"
+            cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}")
+
+            if (gitTagName.equals('')) {
+              echo "Creating Image Tag With Git Tag Name: No Git Tag Name Detected, No Need to Create Image Tag"
+            } else {
+              echo "Creating Image Tag With Git Tag Name: Create Image Tag with Git Tag Name"
+              sh "docker tag ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_DEV_IMAGE_NAME}:${params.DOCKER_DEV_IMAGE_TAG} ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_DEV_IMAGE_NAME}:${gitTagName}"
+            }
+
+            flagCheck = true
+          } finally {
+            if (flagCheck == false) {
+              echo "Creating Image Tag With Git Tag Name: Failed, Exiting Pipeline"
+              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
+
+              currentBuild.result = 'FAILURE'
+              sh "exit 1"
+            } else {
+              echo "Creating Image Tag With Git Tag Name: Success, Continuing Pipeline"
+            }
+          }
+        }
+      }
+    }
+
+    stage("Pushing Image to Private Registry") {
       agent { label "jenkins-agent-docker-1" }
       steps {
         script {
           try {
             flagCheck = false
 
-            echo "Logging-in to Docker Development Registry"
-            sh "docker login --username='${params.DOCKER_DEV_REPOSITORY}' --password='${params.DOCKER_DEV_REGISTRY_TOKEN}' ${params.DOCKER_DEV_REGISTRY_URL}"
+            echo "Logging-in to Private Registry"
+            sh "docker login --username='${params.KUBE_DEV_NAMESPACE}' --password='${params.DOCKER_DEV_REGISTRY_TOKEN}' ${params.DOCKER_DEV_REGISTRY_URL}"
 
-            echo "Pushing Image to Docker Development Registry"
-            sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
+            echo "Pushing Image to Private Registry"
+            sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
+            sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}'"
 
-            echo "Logging-out from Docker Development Registry"
+            echo "Logging-out from Private Registry"
             sh "docker logout ${params.DOCKER_DEV_REGISTRY_URL}"
 
             flagCheck = true
           } finally {
             if (flagCheck == false) {
-              echo "Pushing Image to Docker Registry: Failed, Exiting Pipeline"
-              cleanUpDocker("${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              echo "Pushing Image to Private Registry: Failed, Exiting Pipeline"
+              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
               sh "docker logout ${params.DOCKER_DEV_REGISTRY_URL}"
 
               currentBuild.result = 'FAILURE'
               sh "exit 1"
             } else {
-              echo "Pushing Image to Docker Registry: Success, Continuing Pipeline"
+              echo "Pushing Image to Private Registry: Success, Continuing Pipeline"
+            }
+          }
+        }
+      }
+    }
+
+    stage("Creating Image Stream Tag in Kubernetes Namespace") {
+      agent { label "jenkins-agent-docker-1"}
+      steps {
+        script {
+          try {
+            flagCheck = false
+            
+            if (gitTagName.equals('')) {
+              echo "Creating Image Stream Tag in Kubernetes Namespace: No Git Tag Name Detected, No Need to Create Image Tag"
+            } else {
+              echo "Creating Image Stream Tag in Kubernetes Namespace: Create Image Stream Tag with Git Tag Name"
+              
+              echo "Logging-in to Kubernetes Environment"
+              sh "${kubeCMD} login ${params.KUBE_DEV_URL} --token=${params.KUBE_DEV_TOKEN}"
+
+              echo "Selecting Active Project/Namespace in Kubernetes Environment"
+              sh "${kubeCMD} project ${params.KUBE_DEV_NAMESPACE}"
+
+              echo "Tagging Image Stream Tag with Git Tag Name in Kubernetes Environment"
+              sh "${kubeCMD} tag ${params.DOCKER_DEV_IMAGE_NAME}:${gitTagName} ${params.DOCKER_DEV_IMAGE_NAME}:${gitTagName}"
+
+              echo "Logging-out from Kubernetes Environment"
+              sh "${kubeCMD} logout ${params.KUBE_DEV_URL}"
+            }
+
+            flagCheck = true
+          } finally {
+            if (flagCheck == false) {
+              echo "Creating Image Stream Tag in Kubernetes Namespace: Failed, Exiting Pipeline"
+              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
+              sh "${kubeCMD} logout ${params.KUBE_DEV_URL}"
+
+              currentBuild.result = 'FAILURE'
+              sh "exit 1"
+            } else {
+              echo "Creating Image Stream Tag in Kubernetes Namespace: Success, Continuing Pipeline"
             }
           }
         }
@@ -382,7 +486,8 @@ pipeline {
           steps {
             script {
               echo "Cleaning-up Environment"
-              cleanUpDocker("${params.DOCKER_DEV_REPOSITORY}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.DOCKER_DEV_REPOSITORY}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+              cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")              
             }
           }
         }
