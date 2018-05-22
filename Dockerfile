@@ -13,6 +13,7 @@ RUN cd /tmp && npm install
 RUN mkdir -p /usr/src/app \
   && cp -a /tmp/node_modules /usr/src/app
 
+# add file to constainer
 ADD . /usr/src/app
 
 # expose port
