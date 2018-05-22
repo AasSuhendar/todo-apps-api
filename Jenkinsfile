@@ -125,7 +125,7 @@ pipeline {
               echo "Get Latest Git Tag Name"
               gitTagName = sh (
                 returnStdout: true,
-                script: "git tag -l '*rc*' | cat | sort -V | tail -n 1 | xargs | tr -d ' ' | tr '\\n'"
+                script: "git tag -l '*rc*' | cat | sort -V | tail -n 1 | xargs | tr -d ' ' | tr -d '\\n'"
               )
               println gitTagName
 
@@ -157,7 +157,7 @@ pipeline {
               echo "Get Latest Git Tag Name"
               gitTagName = sh (
                 returnStdout: true,
-                script: "git tag -l '*rc*' | cat | sort -V | tail -n 1 | xargs | tr -d ' ' | tr '\\n'"
+                script: "git tag -l '*rc*' | sort -V | cat | tail -n 1 | xargs | tr -d ' ' | tr -d '\\n'"
               )
               println gitTagName
 
