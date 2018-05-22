@@ -480,7 +480,7 @@ pipeline {
               sh "${kubeCMD} tag ${params.DOCKER_IMAGE_NAME}:${gitTagName} ${params.DOCKER_IMAGE_NAME}:${gitTagName}"
 
               echo "Logging-out from Kubernetes Environment"
-              sh "${kubeCMD} logout ${params.KUBE_DEV_URL}"
+              sh "${kubeCMD} logout"
             } else {
               echo "Creating Image Stream Tag in Kubernetes Namespace: Skipping, Git Master HEAD Not Equal With Git Latest Tag HEAD"
             }
@@ -491,7 +491,7 @@ pipeline {
               echo "Creating Image Stream Tag in Kubernetes Namespace: Failed, Exiting Pipeline"
               cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
               cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
-              sh "${kubeCMD} logout ${params.KUBE_DEV_URL}"
+              sh "${kubeCMD} logout"
 
               currentBuild.result = 'FAILURE'
               sh "exit 1"
