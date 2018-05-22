@@ -125,19 +125,19 @@ pipeline {
               echo "Get Latest Git Tag Name"
               gitTagName = sh (
                 returnStdout: true,
-                script: "git tag -l '*rc*' | cat | sort -V | tail -n 1 | xargs | tr -d ' ' | tr '\n'"
+                script: "git tag -l '*rc*' | cat | sort -V | tail -n 1 | xargs | tr -d ' ' | tr '\\n'"
               )
               println gitTagName
 
               echo "Match Git HEAD with Latest Git Tag Name"
               def gitMasterHead = sh (
                 returnStdout: true,
-                script: "git log | cat | head -n 1 | awk -F' ' '{print \$2}' | xargs | tr -d ' ' | tr -d '\n'"
+                script: "git log | cat | head -n 1 | awk -F' ' '{print \$2}' | xargs | tr -d ' ' | tr -d '\\n'"
               )
               println gitMasterHead
               def gitTagHead = sh (
                 returnStdout: true,
-                script: "git log '${gitTagName}' | cat | head -n 1 | awk -F' ' '{print \$2}' | xargs | tr -d ' '| tr -d '\n'"
+                script: "git log '${gitTagName}' | cat | head -n 1 | awk -F' ' '{print \$2}' | xargs | tr -d ' '| tr -d '\\n'"
               )
               println gitTagHead
               if (gitMasterHead == gitTagHead) {
@@ -157,19 +157,19 @@ pipeline {
               echo "Get Latest Git Tag Name"
               gitTagName = sh (
                 returnStdout: true,
-                script: "git tag -l '*rc*' | cat | sort -V | tail -n 1 | xargs | tr -d ' ' | tr '\n'"
+                script: "git tag -l '*rc*' | cat | sort -V | tail -n 1 | xargs | tr -d ' ' | tr '\\n'"
               )
               println gitTagName
 
               echo "Match Git HEAD with Latest Git Tag Name"
               def gitMasterHead = sh (
                 returnStdout: true,
-                script: "git log | cat | head -n 1 | awk -F' ' '{print \$2}' | xargs | tr -d ' ' | tr -d '\n'"
+                script: "git log | cat | head -n 1 | awk -F' ' '{print \$2}' | xargs | tr -d ' ' | tr -d '\\n'"
               )
               println gitMasterHead
               def gitTagHead = sh (
                 returnStdout: true,
-                script: "git log '${gitTagName}' | cat | head -n 1 | awk -F' ' '{print \$2}' | xargs | tr -d ' '| tr -d '\n'"
+                script: "git log '${gitTagName}' | cat | head -n 1 | awk -F' ' '{print \$2}' | xargs | tr -d ' '| tr -d '\\n'"
               )
               println gitTagHead
               if (gitMasterHead == gitTagHead) {
@@ -276,7 +276,7 @@ pipeline {
                 containerPort.each { portValue ->
                   exposedPort = sh (
                     returnStdout: true,
-                    script: "docker ps -a -f 'name=${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | cat | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2 | xargs | tr -d ' ' | tr -d '\n'"
+                    script: "docker ps -a -f 'name=${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | cat | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2 | xargs | tr -d ' ' | tr -d '\\n'"
                   )
 
                   curlRun("127.0.0.1:${exposedPort}", "http_code")
@@ -308,7 +308,7 @@ pipeline {
                 containerPort.each { portValue ->
                   exposedPort = sh (
                     returnStdout: true,
-                    script: "docker ps -a -f 'name=${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | cat | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2 | xargs | tr -d ' ' | tr -d '\n'"
+                    script: "docker ps -a -f 'name=${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | cat | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2 | xargs | tr -d ' ' | tr -d '\\n'"
                   )
 
                   curlRun("127.0.0.1:${exposedPort}", "time_total")
@@ -341,7 +341,7 @@ pipeline {
                 containerPort.each { portValue ->
                   exposedPort = sh (
                     returnStdout: true,
-                    script: "docker ps -a -f 'name=${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | cat | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2 | xargs | tr -d ' ' | tr -d '\n'"
+                    script: "docker ps -a -f 'name=${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}' --format '{{.Ports}}' | cat | awk '{for(i=1;i<=NF;i++){tmp=match(\$i,/${portValue}/);if(tmp){print \$i}}}' | cut -d'-' -f1 | cut -d':' -f2 | xargs | tr -d ' ' | tr -d '\\n'"
                   )
 
                   curlRun("127.0.0.1:${exposedPort}", "size_download")
