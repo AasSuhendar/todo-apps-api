@@ -95,7 +95,7 @@ pipeline {
               cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
 
               echo "Setting-up Environment"
-              if (${params.KUBE_DEV_IS_OC}) {
+              if (${params.KUBE_DEV_IS_OC} == true) {
                 kubeCMD = "oc"
               } else {
                 kubeCMD = "kubectl"
