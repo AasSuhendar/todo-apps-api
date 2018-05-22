@@ -125,19 +125,19 @@ pipeline {
               echo "Get Latest Git Tag Name"
               gitTagName = sh (
                 returnStdout: true,
-                script: "echo $(git tag -l '*rc*' | cat | tail -n 1)"
+                script: "echo \$(git tag -l '*rc*' | cat | tail -n 1)"
               )
               println gitTagName
 
               echo "Match Git HEAD with Latest Git Tag Name"
               def gitMasterHead = sh (
                 returnStdout: true,
-                script: "echo $(git log | cat | head -n 1 | awk -F' ' '{print \$2}')"
+                script: "echo \$(git log | cat | head -n 1 | awk -F' ' '{print \$2}')"
               )
               println gitMasterHead
               def gitTagHead = sh (
                 returnStdout: true,
-                script: "echo $(git log ${gitTagName} | cat | head -n 1 | awk -F' ' '{print \$2}')"
+                script: "echo \$(git log ${gitTagName} | cat | head -n 1 | awk -F' ' '{print \$2}')"
               )
               println gitTagHead
               if (gitMasterHead == gitTagHead) {
@@ -157,19 +157,19 @@ pipeline {
               echo "Get Latest Git Tag Name"
               gitTagName = sh (
                 returnStdout: true,
-                script: "echo $(git tag -l '*rc*' | cat | tail -n 1)"
+                script: "echo \$(git tag -l '*rc*' | cat | tail -n 1)"
               )
               println gitTagName
 
               echo "Match Git HEAD with Latest Git Tag Name"
               def gitMasterHead = sh (
                 returnStdout: true,
-                script: "echo $(git log | cat | head -n 1 | awk -F' ' '{print \$2}')"
+                script: "echo \$(git log | cat | head -n 1 | awk -F' ' '{print \$2}')"
               )
               println gitMasterHead
               def gitTagHead = sh (
                 returnStdout: true,
-                script: "echo $(git log ${gitTagName} | cat | head -n 1 | awk -F' ' '{print \$2}')"
+                script: "echo \$(git log ${gitTagName} | cat | head -n 1 | awk -F' ' '{print \$2}')"
               )
               println gitTagHead
               if (gitMasterHead == gitTagHead) {
