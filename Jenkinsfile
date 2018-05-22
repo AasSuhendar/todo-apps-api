@@ -135,7 +135,7 @@ pipeline {
               )
               def gitTagHead = sh (
                 returnStdout: true,
-                script: "git log '${gitTagName}' | cat | head -n 1 | awk -F' ' '{print \$2}'"
+                script: "git log ${gitTagName} | cat | head -n 1 | awk -F' ' '{print \$2}'"
               )
               if (gitMasterHead == gitTagHead) {
                 gitHeadMatch = true
@@ -164,7 +164,7 @@ pipeline {
               )
               def gitTagHead = sh (
                 returnStdout: true,
-                script: "git log '${gitTagName}' | cat | head -n 1 | awk -F' ' '{print \$2}'"
+                script: "git log ${gitTagName} | cat | head -n 1 | awk -F' ' '{print \$2}'"
               )
               if (gitMasterHead == gitTagHead) {
                 gitHeadMatch = true
