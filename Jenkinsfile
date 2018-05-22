@@ -131,11 +131,11 @@ pipeline {
               echo "Match Git HEAD with Latest Git Tag Name"
               def gitMasterHead = sh (
                 returnStdout: true,
-                script: "git log | head -n 1 | awk -F' ' '{print \$2}'"
+                script: "git log | cat | head -n 1 | awk -F' ' '{print \$2}'"
               )
               def gitTagHead = sh (
                 returnStdout: true,
-                script: "git log ${gitTagName} | head -n 1 | awk -F' ' '{print \$2}'"
+                script: "git log '${gitTagName}' | cat | head -n 1 | awk -F' ' '{print \$2}'"
               )
               if (gitMasterHead == gitTagHead) {
                 gitHeadMatch = true
@@ -160,15 +160,15 @@ pipeline {
               echo "Match Git HEAD with Latest Git Tag Name"
               def gitMasterHead = sh (
                 returnStdout: true,
-                script: "git log | head -n 1 | awk -F' ' '{print \$2}'"
+                script: "git log | cat | head -n 1 | awk -F' ' '{print \$2}'"
               )
               def gitTagHead = sh (
                 returnStdout: true,
-                script: "git log ${gitTagName} | head -n 1 | awk -F' ' '{print \$2}'"
+                script: "git log '${gitTagName}' | cat | head -n 1 | awk -F' ' '{print \$2}'"
               )
               if (gitMasterHead == gitTagHead) {
                 gitHeadMatch = true
-              }              
+              }
             }
           }
         }
