@@ -1,6 +1,7 @@
 // global variable
 def flagCheck     = false
 def gitTagName    = ""
+def gitHeadMatch  = false
 def containerPort = ""
 def containerEnv  = ""
 def kubeCMD       = ""
@@ -49,11 +50,12 @@ def cleanUpDocker(containerName="", imageName="") {
 pipeline {
   parameters {
     booleanParam(name: 'KUBE_DEV_IS_OC',       description: 'Kubernetes Development is OpenShift',               defaultValue: true)    
+    string(name: 'KUBE_DEV_VERSION',           description: 'Kubernetes Development Version',                    defaultValue: '1.6.1')
     string(name: 'KUBE_DEV_URL',               description: 'Kubernetes Development URL',                        defaultValue: 'https://console.playcourt.id')
     string(name: 'KUBE_DEV_TOKEN',             description: 'Kubernetes Development Token',                      defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZW1vcGxheWNvdXJ0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtZXh0LXRva2VuLXdqZHI1Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImplbmtpbnMtZXh0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiZDQxYzJkMzEtNThkOC0xMWU4LWFmZmMtMDA1MDU2OGM0YzQyIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmRlbW9wbGF5Y291cnQ6amVua2lucy1leHQifQ.VuxG9HDqW6yFoP_rVq0TxP1bzfGtVoH5EMqaz4tBJdQUajOvmrjJmFSrXkrp5RLfNOGdab7oNU4xLt1wgeNRMxwTsBOHDPLLAabxWA6bkRdysNHoMjFL0f0rwKHdEncmMEtoXpM0bp3Rss1FIpYDKb0LwHCbDMyaw6u3ZxvnYIAWeLN3_aB4DyHpwJkDIO8xH9rJKDKMq-8v2DpDCxDmqt1Y71Q6nksNMfBrRF-d0c1xxynUuXIZhiXuogCEypX3bnOYr576eSSH-_4xQX2jSD-xwPKTp9qa60IYHzSEqDYfRBZpTYyGZBZVGYs4lZdhCjrt8FsfvlCXdvu4coDMbw')
     string(name: 'KUBE_DEV_NAMESPACE',         description: 'Kubernetes Development Namespace',                  defaultValue: 'demoplaycourt')
     
-    string(name: 'DOCKER_DEV_REGISTRY_URL',    description: 'Docker Development Registry URL',                   defaultValue: 'docker-registry-default.apps.playcourt.id')
+    string(name: 'DOCKER_DEV_REGISTRY_URL',    description: 'Docker Development Registry URL',                   defaultValue: 'https://docker-registry-default.apps.playcourt.id')
     string(name: 'DOCKER_DEV_REGISTRY_TOKEN',  description: 'Docker Development Registry Token',                 defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZW1vcGxheWNvdXJ0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRvY2tlci1wdXNoZXItdG9rZW4tZDJ6dGoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZG9ja2VyLXB1c2hlciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6Ijg5YWExYTI3LTVhNGUtMTFlOC1iZjczLTAwNTA1NjhjMmQ1MiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZW1vcGxheWNvdXJ0OmRvY2tlci1wdXNoZXIifQ.Kz_Uu1auwyYYH6Ko3uY7q56mVZNXScY3GGC3xuOh59gWm5dO_ZWwcO15UXbcNoyOEsa4WB9vrN0HncKAggxoCQQi9YnmxcEoAryCx1jWENuDv42nRUWglrvjEOkr4-jv8M5SUnHrzHAKgnjoYj5nGLzUzjhMukv6zmkRT38PGxLh30Ao5lMt2UWsIvgBu74wFnNehBQoguhxRcz6vX7eBuPL2rHEJx0jN9FSZqkyW9j2emqecL9YckTTPO7SHgcorYAJD8ZxmAD7yLbaMXeKrkDC0fO23nSbpFjdq3nm7jmMB07CwEg5jzkOpNycSznTM5xXgC2Jn1a71JEpNIRaaA')
 
     string(name: 'DOCKER_IMAGE_NAME',          description: 'Docker Image Name',                                 defaultValue: 'todo-apps-api')
@@ -96,9 +98,9 @@ pipeline {
 
               echo "Setting-up Environment"
               if (params.KUBE_DEV_IS_OC) {
-                kubeCMD = "oc"
+                kubeCMD = "oc-${params.KUBE_DEV_VERSION}"
               } else {
-                kubeCMD = "kubectl"
+                kubeCMD = "kubectl-${params.KUBE_DEV_VERSION}"
               }
               
               echo "Checking-up Environment"
@@ -125,6 +127,19 @@ pipeline {
                 returnStdout: true,
                 script: "git tag -l "*rc*" | cat | tail -n 1"
               )
+
+              echo "Match Git HEAD with Latest Git Tag Name"
+              def gitMasterHead = sh (
+                returnStdout: true,
+                script: "git rev-parse HEAD"
+              )
+              def gitTagHead = sh (
+                returnStdout: true,
+                script: "git tag -v ${gitTagName} | head -n 1 | awk -F' ' '{print \$2}'"
+              )
+              if (gitMasterHead == gitTagHead) {
+                gitHeadMatch = true
+              }
             }
           }
         }
@@ -141,6 +156,19 @@ pipeline {
                 returnStdout: true,
                 script: "git tag -l "*rc*" | cat | tail -n 1"
               )
+
+              echo "Match Git HEAD with Latest Git Tag Name"
+              def gitMasterHead = sh (
+                returnStdout: true,
+                script: "git rev-parse HEAD"
+              )
+              def gitTagHead = sh (
+                returnStdout: true,
+                script: "git tag -v ${gitTagName} | head -n 1 | awk -F' ' '{print \$2}'"
+              )
+              if (gitMasterHead == gitTagHead) {
+                gitHeadMatch = true
+              }              
             }
           }
         }
@@ -367,11 +395,11 @@ pipeline {
             echo "Cleaning-up Docker"
             cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}")
 
-            if (gitTagName.equals('')) {
-              echo "Creating Image Tag With Git Tag Name: No Git Tag Name Detected, No Need to Create Image Tag"
+            if (gitHeadMatch) {
+              echo "Creating Image Tag With Git Tag Name"
+              sh "docker tag ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_DEV_IMAGE_NAME}:${params.DOCKER_DEV_IMAGE_TAG} ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_DEV_IMAGE_NAME}:${gitTagName}"              
             } else {
-              echo "Creating Image Tag With Git Tag Name: Create Image Tag with Git Tag Name"
-              sh "docker tag ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_DEV_IMAGE_NAME}:${params.DOCKER_DEV_IMAGE_TAG} ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_DEV_IMAGE_NAME}:${gitTagName}"
+              echo "Creating Image Tag With Git Tag Name: Skipping, Git Master HEAD Not Equal With Git Latest Tag HEAD"
             }
 
             flagCheck = true
@@ -403,7 +431,9 @@ pipeline {
 
             echo "Pushing Image to Private Registry"
             sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
-            sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}'"
+            if (gitHeadMatch) {
+              sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}'"
+            }
 
             echo "Logging-out from Private Registry"
             sh "docker logout ${params.DOCKER_DEV_REGISTRY_URL}"
@@ -433,11 +463,7 @@ pipeline {
           try {
             flagCheck = false
             
-            if (gitTagName.equals('')) {
-              echo "Creating Image Stream Tag in Kubernetes Namespace: No Git Tag Name Detected, No Need to Create Image Tag"
-            } else {
-              echo "Creating Image Stream Tag in Kubernetes Namespace: Create Image Stream Tag with Git Tag Name"
-              
+            if (gitHeadMatch) {
               echo "Logging-in to Kubernetes Environment"
               sh "${kubeCMD} login ${params.KUBE_DEV_URL} --token=${params.KUBE_DEV_TOKEN}"
 
@@ -449,6 +475,8 @@ pipeline {
 
               echo "Logging-out from Kubernetes Environment"
               sh "${kubeCMD} logout ${params.KUBE_DEV_URL}"
+            } else {
+              echo "Creating Image Stream Tag in Kubernetes Namespace: Skipping, Git Master HEAD Not Equal With Git Latest Tag HEAD"
             }
 
             flagCheck = true
