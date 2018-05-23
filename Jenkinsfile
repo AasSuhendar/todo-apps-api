@@ -391,8 +391,8 @@ pipeline {
       }
     }
 
-    stage("Creating Image Tag With Git Tag Name") {
-      agent { label "jenkins-agent-docker-1"}
+    stage("Pushing Image to Private Registry") {
+      agent { label "jenkins-agent-docker-1" }
       steps {
         script {
           try {
@@ -401,39 +401,15 @@ pipeline {
             echo "Cleaning-up Docker"
             cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}")
 
+            echo "Logging-in to Private Registry"
+            sh "docker login --username='${params.KUBE_DEV_NAMESPACE}' --password='${params.DOCKER_DEV_REGISTRY_TOKEN}' ${params.DOCKER_DEV_REGISTRY_URL}"
+
             if (gitHeadMatch) {
               echo "Creating Image Tag With Git Tag Name"
               sh "docker tag ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG} ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}"
             } else {
               echo "Creating Image Tag With Git Tag Name: Skipping, Git Master HEAD Not Equal With Git Latest Tag HEAD"
             }
-
-            flagCheck = true
-          } finally {
-            if (flagCheck == false) {
-              echo "Creating Image Tag With Git Tag Name: Failed, Exiting Pipeline"
-              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
-              cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
-
-              currentBuild.result = 'FAILURE'
-              sh "exit 1"
-            } else {
-              echo "Creating Image Tag With Git Tag Name: Success, Continuing Pipeline"
-            }
-          }
-        }
-      }
-    }
-
-    stage("Pushing Image to Private Registry") {
-      agent { label "jenkins-agent-docker-1" }
-      steps {
-        script {
-          try {
-            flagCheck = false
-
-            echo "Logging-in to Private Registry"
-            sh "docker login --username='${params.KUBE_DEV_NAMESPACE}' --password='${params.DOCKER_DEV_REGISTRY_TOKEN}' ${params.DOCKER_DEV_REGISTRY_URL}"
 
             echo "Pushing Image to Private Registry"
             sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
@@ -456,47 +432,6 @@ pipeline {
               sh "exit 1"
             } else {
               echo "Pushing Image to Private Registry: Success, Continuing Pipeline"
-            }
-          }
-        }
-      }
-    }
-
-    stage("Creating Image Stream Tag in Kubernetes Namespace") {
-      agent { label "jenkins-agent-docker-1"}
-      steps {
-        script {
-          try {
-            flagCheck = false
-            
-            if (gitHeadMatch) {
-              echo "Logging-in to Kubernetes Environment"
-              sh "${kubeCMD} login ${params.KUBE_DEV_URL} --token=${params.KUBE_DEV_TOKEN}"
-
-              echo "Selecting Active Project/Namespace in Kubernetes Environment"
-              sh "${kubeCMD} project ${params.KUBE_DEV_NAMESPACE}"
-
-              echo "Tagging Image Stream Tag with Git Tag Name in Kubernetes Environment"
-              sh "${kubeCMD} tag ${params.DOCKER_IMAGE_NAME}:${gitTagName} ${params.DOCKER_IMAGE_NAME}:${gitTagName}"
-
-              echo "Logging-out from Kubernetes Environment"
-              sh "${kubeCMD} logout"
-            } else {
-              echo "Creating Image Stream Tag in Kubernetes Namespace: Skipping, Git Master HEAD Not Equal With Git Latest Tag HEAD"
-            }
-
-            flagCheck = true
-          } finally {
-            if (flagCheck == false) {
-              echo "Creating Image Stream Tag in Kubernetes Namespace: Failed, Exiting Pipeline"
-              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
-              cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
-              sh "${kubeCMD} logout"
-
-              currentBuild.result = 'FAILURE'
-              sh "exit 1"
-            } else {
-              echo "Creating Image Stream Tag in Kubernetes Namespace: Success, Continuing Pipeline"
             }
           }
         }
