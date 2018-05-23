@@ -42,7 +42,9 @@ def cleanUpDocker(containerName="", imageName="") {
       sh "docker rmi -f '${imageName}' || true"
     }
 
-    cleanUpWorkspace()
+    if (! containerName.equals('') && ! imageName.equals('')) {
+      cleanUpWorkspace()
+    }
   }  
 }
 
