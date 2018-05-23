@@ -7,7 +7,7 @@ describe('Cek end point API - todo-apps-api.apps.playcourt.id' , () => {
   test('End point mengembalikan pesan "Wellcome to TODO Apps API"', (done) => {
     var successResponse = {
       status: true,
-      code: 'GET-MAIN-ENDPOINT',
+      code: 'GET-MAIN-ENDPOINT-API',
       message: 'Wellcome to TODO Apps API'
     }
     request(server).get('/')
