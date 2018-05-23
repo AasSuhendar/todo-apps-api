@@ -15,7 +15,7 @@ describe('Cek end point API - todo-apps-api.apps.playcourt.id' , () => {
       .end((err, res) => {
         expect(res.statusCode).toBe(200)
         expect(res.body).toHaveProperty('message', 'Wellcome to TODO Apps API')
-        expect(res.body).toHaveProperty('code', 'GET-MAIN-ENDPOINT')
+        expect(res.body).toHaveProperty('code', 'GET-MAIN-ENDPOINT-API')
         expect(res.body).toHaveProperty('status', true)
         expect(res.body).toMatchObject(successResponse)
         done()
