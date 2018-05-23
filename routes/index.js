@@ -4,7 +4,7 @@ var router = express.Router()
 router.get('/', function (req, res) {
   res.status(200).send({
     status: true,
-    code: 'GET-MAIN-ENDPOINT',
+    code: 'GET-MAIN-ENDPOINT-API',
     message: 'Wellcome to TODO Apps API'
   })
 })
