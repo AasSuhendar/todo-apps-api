@@ -1,5 +1,9 @@
 // global variable
 def flagCheck     = false
+def gitTagName    = ""
+def gitHeadMatch  = false
+def containerPort = ""
+def containerEnv  = ""
 
 // workspace cleaner helper function
 def cleanUpWorkspace() {
