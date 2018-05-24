@@ -1,4 +1,4 @@
-# base used
+# base image used
 FROM telkomindonesia/alpine:nodejs-8.9.3
 
 # maintainer
