@@ -47,6 +47,7 @@ def cleanUpDocker(containerName="", imageName="") {
 // pipeline declarative
 pipeline {
   parameters {
+    
     string(name: 'KUBE_DEV_NAMESPACE',         description: 'Kubernetes Development Namespace',                  defaultValue: 'playcourt-todo-dev')
     
     string(name: 'DOCKER_DEV_REGISTRY_URL',    description: 'Docker Development Registry URL',                   defaultValue: 'docker-registry-default.apps.playcourt.id')
@@ -59,6 +60,7 @@ pipeline {
     string(name: 'CONTAINER_ENV',              description: 'Container Environment List (Seperate with Commas)', defaultValue: 'NODE_ENV=test')
 
     string(name: 'GIT_TAG_SEARCH',             description: 'Search for Git Tag Record',                         defaultValue: 'rc')
+    
   }
 
   agent none
