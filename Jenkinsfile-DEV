@@ -47,20 +47,17 @@ def cleanUpDocker(containerName="", imageName="") {
 // pipeline declarative
 pipeline {
   parameters {
-    booleanParam(name: 'KUBE_DEV_IS_OC',       description: 'Kubernetes Development is OpenShift',               defaultValue: true)    
-    string(name: 'KUBE_DEV_VERSION',           description: 'Kubernetes Development Version',                    defaultValue: '1.6.1')
-    string(name: 'KUBE_DEV_URL',               description: 'Kubernetes Development URL',                        defaultValue: 'https://console.playcourt.id')
-    string(name: 'KUBE_DEV_TOKEN',             description: 'Kubernetes Development Token',                      defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby1kZXYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiamVua2lucy1leHQtdG9rZW4tOW5semgiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucy1leHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI4MzE1ODJmYi01ZWZmLTExZTgtOWFjZC0wMDUwNTY4YzU2ZTUiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6cGxheWNvdXJ0LXRvZG8tZGV2OmplbmtpbnMtZXh0In0.ZvBTBHOGa_2Mlaqb48Pnc_VEOcZM6Os_C0CXc9sNE17_fiUc7OUTjUdexy34znpLw9CfrFu_t04-GrJ77jt20R6SL3Z8hIAnKcBbbI5zWoW2uGLchqmHvA9Fs6hZM6yFvtKpUisWcLkdmm1JglF5eEZ0ks4uQ7C_JFuDulH7P3EtvR1DUJw5rMMM_7dC5eUd48gI3Lr_9mjXtV8KKmdSKTRd5z1RWBKxh29_DGv75b1POZogcaUn0NdXbGDPH4pGls9cW3u7p7gzPck_05kC5bVjVzOeAF3sx0tLirQ6qpn2PN4ybsb47uWNGQN2SFPJD-TebvwnRfIZ1eQ1ANdaTw')
     string(name: 'KUBE_DEV_NAMESPACE',         description: 'Kubernetes Development Namespace',                  defaultValue: 'playcourt-todo-dev')
     
     string(name: 'DOCKER_DEV_REGISTRY_URL',    description: 'Docker Development Registry URL',                   defaultValue: 'docker-registry-default.apps.playcourt.id')
     string(name: 'DOCKER_DEV_REGISTRY_TOKEN',  description: 'Docker Development Registry Token',                 defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby1kZXYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZG9ja2VyLXB1c2hlci10b2tlbi10ZHc4NSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkb2NrZXItcHVzaGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiN2Q4NTU3ZDItNWVmZi0xMWU4LTlhY2QtMDA1MDU2OGM1NmU1Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBsYXljb3VydC10b2RvLWRldjpkb2NrZXItcHVzaGVyIn0.oGgBQZLCv2CmAbMXK5is5ia_QiDIQ9h5f6_F6pSVyukwRSIuvCKQcGpo00y8AQukoeXplZlHj3unJdbO8QMC4p1Mt2xG32Fo6sRtbwqNgCe9GxfGMecMZWwmyEh2awZnIoXtOhE9Aa4M8Gtq9gOsIHGv_7dG-bSGVejQWITqqZmbMz-54RTE2ubskGrogRHwojWDU6FAHya3G0E73cqFWib6nQcoxseDn58lPagtHl0oEskoM5fowPUzsaMBML8UEfdmSMjuoGpdZQnsOg7CV-WZ1vIPExPXEJMcUmMii47ECqWiJpQ7B4GIXxhjTHwq_guZbn5Q6j0JYW90KX1t4g')
 
-    string(name: 'DOCKER_IMAGE_NAME',          description: 'Docker Image Name',                                 defaultValue: 'playcourt-todo-apps-api')
+    string(name: 'DOCKER_IMAGE_NAME',          description: 'Docker Image Name',                                 defaultValue: 'api')
     string(name: 'DOCKER_IMAGE_TAG',           description: 'Docker Image Tag',                                  defaultValue: 'latest')
 
     string(name: 'CONTAINER_PORT',             description: 'Container Port List (Seperate with Commas)',        defaultValue: '3000')
     string(name: 'CONTAINER_ENV',              description: 'Container Environment List (Seperate with Commas)', defaultValue: 'NODE_ENV=test')
+
     string(name: 'GIT_TAG_SEARCH',             description: 'Search for Git Tag Record',                         defaultValue: 'rc')
   }
 
