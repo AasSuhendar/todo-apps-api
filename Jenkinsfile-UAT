@@ -1,0 +1,185 @@
+// global variable
+def flagCheck     = false
+
+// workspace cleaner helper function
+def cleanUpWorkspace() {
+  script {
+    deleteDir()
+  }
+}
+
+// docker cleaner helper function
+def cleanUpDocker(containerName="", imageName="") {
+  script {
+    if (! containerName.equals('')) {
+      sh "docker stop '${containerName}' || true"
+      sh "docker rm -f '${containerName}' || true"
+    }
+    
+    if (! imageName.equals('')) {
+      sh "docker rmi -f '${imageName}' || true"
+      cleanUpWorkspace()      
+    }
+  }  
+}
+
+pipeline {
+  parameters {
+    string(name: 'KUBE_SRC_NAMESPACE',         description: 'Kubernetes Source Namespace',            defaultValue: 'playcourt-todo-dev')
+    string(name: 'DOCKER_SRC_REGISTRY_URL',    description: 'Docker Source Registry URL',             defaultValue: 'docker-registry-default.apps.playcourt.id')
+    string(name: 'DOCKER_SRC_REGISTRY_TOKEN',  description: 'Docker Source Registry Token',           defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby1kZXYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZG9ja2VyLXB1c2hlci10b2tlbi10ZHc4NSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkb2NrZXItcHVzaGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiN2Q4NTU3ZDItNWVmZi0xMWU4LTlhY2QtMDA1MDU2OGM1NmU1Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBsYXljb3VydC10b2RvLWRldjpkb2NrZXItcHVzaGVyIn0.oGgBQZLCv2CmAbMXK5is5ia_QiDIQ9h5f6_F6pSVyukwRSIuvCKQcGpo00y8AQukoeXplZlHj3unJdbO8QMC4p1Mt2xG32Fo6sRtbwqNgCe9GxfGMecMZWwmyEh2awZnIoXtOhE9Aa4M8Gtq9gOsIHGv_7dG-bSGVejQWITqqZmbMz-54RTE2ubskGrogRHwojWDU6FAHya3G0E73cqFWib6nQcoxseDn58lPagtHl0oEskoM5fowPUzsaMBML8UEfdmSMjuoGpdZQnsOg7CV-WZ1vIPExPXEJMcUmMii47ECqWiJpQ7B4GIXxhjTHwq_guZbn5Q6j0JYW90KX1t4g')
+    string(name: 'DOCKER_SRC_IMAGE_NAME',      description: 'Docker Source Image Name',               defaultValue: 'api')
+
+    string(name: 'KUBE_DST_NAMESPACE',        description: 'Kubernetes Destination Namespace',        defaultValue: 'playcourt-todo-uat')
+    string(name: 'DOCKER_DST_REGISTRY_URL',   description: 'Docker Destination Registry URL',         defaultValue: 'docker-registry-default.apps.playcourt.id')
+    string(name: 'DOCKER_DST_REGISTRY_TOKEN', description: 'Docker Destination Registry Token',       defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby11YXQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZG9ja2VyLXB1c2hlci10b2tlbi0yOTdnbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkb2NrZXItcHVzaGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNDBiMzZhMWItNWYwMC0xMWU4LWJmNzMtMDA1MDU2OGMyZDUyIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBsYXljb3VydC10b2RvLXVhdDpkb2NrZXItcHVzaGVyIn0.oJC3fgi7XjbBDHJpt5H4JvRdZl_t3egtRNQ03swh2IZLqd7VTcDiu9JqxSNq8Yv6BZWz6sC5TdVCkx68BHqjelmULmdLPAd13acc4biz5d-CZUfb_qOXXfwjlA1jyAenpPiPwlp0OTBf7whSkUE2--LXNkikGdHIVIL5wQQQXOXu8mFEIaSgD0DUvSts6MFBLQWLkEV3rIGV3aha_69Xkd5C5vpUB3efNadNg5RuExLhdegkFIZhiamTcNMmUUWTpdMJo7rqippYgcE5vv9HvonNNjQ_q8iZqiEPHepdopMAV4QDftMv6NMZt3kYbsxOYMAWeAWOu4dxQhCmUehOrA')
+    string(name: 'DOCKER_DST_IMAGE_NAME',     description: 'Docker Destination Image Name',           defaultValue: 'api')
+
+    string(name: 'GIT_TAG_SEARCH',            description: 'Search for Git Tag Record',               defaultValue: 'rc')
+  }
+
+  agent none
+  stages {
+    stage("Initialize") {
+      agent { label "jenkins-agent-docker-1" }
+      steps {
+        script {
+          echo "Cleaning-up Environment"
+          cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${gitTagName}")
+          cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest")
+
+          echo "Checking-up Environment"
+          sh "git --version"
+          sh "docker --version"
+        }
+      }
+    }
+
+    stage("Checkout SCM") {
+      agent { label "jenkins-agent-docker-1" }
+      steps {
+        script {
+          echo "Checking-out SCM"
+          checkout scm
+
+          echo "Get Latest Git Tag Name"
+          gitTagName = sh (
+            returnStdout: true,
+            script: "git tag -l '*${params.GIT_TAG_SEARCH}*' | sort -V | cat | tail -n 1 | xargs | tr -d ' ' | tr -d '\\n'"
+          )
+          println gitTagName
+        }
+      }
+    }
+
+    stage("Pulling Source Image") {
+      agent { label "jenkins-agent-docker-1" }
+      steps {
+        script {
+          try {
+            flagCheck = false
+
+            echo "Loging-in to Docker Source Registry"
+            sh "docker login --username='${params.KUBE_SRC_NAMESPACE}' --password='${params.DOCKER_SRC_REGISTRY_TOKEN}' ${params.DOCKER_SRC_REGISTRY_URL}"
+
+            echo "Pulling Image from Docker Source Registry"
+            sh "docker pull ${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${gitTagName}"
+
+            echo "Loging-out from Docker Source Registry"
+            sh "docker logout ${params.DOCKER_SRC_REGISTRY_URL}"
+
+            flagCheck = true
+          } finally {
+            if (flagCheck == false) {
+              echo "Pulling Source Image: Failed, Exiting Pipeline"
+              cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${gitTagName}")
+              sh "docker logout ${params.DOCKER_SRC_REGISTRY_URL}"
+
+              currentBuild.result = 'FAILURE'
+              sh "exit 1"
+            } else {
+              echo "Pulling Source Image: Success, Continuing Pipeline"
+            }
+          }
+        }
+      }
+    }
+
+    stage("Re-tagging Source Image as Destination Image") {
+      agent { label "jenkins-agent-docker-1" }
+      steps {
+        script {
+          try {
+            flagCheck = false
+
+            echo "Re-tagging Source Image as Destination Image"
+            sh "docker tag ${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${gitTagName} ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${gitTagName}"
+            sh "docker tag ${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${gitTagName} ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest"
+
+            flagCheck = true
+          } finally {
+            if (flagCheck == false) {
+              echo "Re-tagging Source Image as Destination Image: Failed, Exiting Pipeline"
+              cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${gitTagName}")
+              cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${gitTagName}")
+              cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest")
+
+              currentBuild.result = 'FAILURE'
+              sh "exit 1"
+            } else {
+              echo "Re-tagging Source Image as Destination Image: Success, Continuing Pipeline"
+            }
+          }
+        }
+      }
+    }
+
+    stage("Pushing Destination Image") {
+      agent { label "jenkins-agent-docker-1" }
+      steps {
+        script {
+          try {
+            flagCheck = false
+
+            echo "Loging-in to Docker Destination Registry"
+            sh "docker login --username='${params.KUBE_DST_NAMESPACE}' --password='${params.DOCKER_DST_REGISTRY_TOKEN}' ${params.DOCKER_DST_REGISTRY_URL}"
+            
+            echo "Pushing Image to Docker Destination Registry"
+            sh "docker push ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${gitTagName}"
+            sh "docker push ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest"
+
+            echo "Loging-out from Docker Destination Registry"
+            sh "docker logout ${params.DOCKER_DST_REGISTRY_URL}"
+
+            flagCheck = true
+          } finally {
+            if (flagCheck == false) {
+              echo "Pushing Destination Image: Failed, Exiting Pipeline"
+              cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${gitTagName}")
+              cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${gitTagName}")
+              cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest")
+              sh "docker logout ${params.DOCKER_DST_REGISTRY_URL}"
+
+              currentBuild.result = 'FAILURE'
+              sh "exit 1"
+            } else {
+              echo "Pushing Destination Image: Success, Continuing Pipeline"
+            }
+          }
+        }
+      }
+    }
+
+    stage("Finalize") {
+      agent { label "jenkins-agent-docker-1" }
+      steps {
+        script {
+          echo "Cleaning-up Environment"
+          cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${gitTagName}")
+          cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest")
+        }
+      }
+    }
+
+  }
+}
