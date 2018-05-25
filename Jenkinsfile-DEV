@@ -47,6 +47,7 @@ def cleanUpDocker(containerName="", imageName="") {
 // pipeline declarative
 pipeline {
   parameters {
+
     string(name: 'KUBE_DEV_NAMESPACE',         description: 'Kubernetes Development Namespace',                  defaultValue: 'playcourt-todo-dev')
     
     string(name: 'DOCKER_DEV_REGISTRY_URL',    description: 'Docker Development Registry URL',                   defaultValue: 'docker-registry-default.apps.playcourt.id')
@@ -63,6 +64,7 @@ pipeline {
     
     string(name: 'JOB_NEXT_NAME',              description: 'Jenkins Next Job Name',                             defaultValue: 'Apps-API-UAT')
     string(name: 'JOB_NEXT_TOKEN',             description: 'Jenkins Next Job Token',                            defaultValue: '1f6fbf41-409a-4a18-a377-c0335af9b967')
+  
   }
 
   agent none
