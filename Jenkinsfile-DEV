@@ -412,8 +412,8 @@ pipeline {
             if (gitHeadMatch) {
               echo "Sending Mail Notification for New Image Tag"
               emailext(
-                to: "${params.EMAIL_DST}"
-                subject: "Jenkins ${env.JOB_NAME}: New Image Tag Has Been Pushed"
+                to: "${params.EMAIL_DST}",
+                subject: "Jenkins ${env.JOB_NAME}: New Image Tag Has Been Pushed",
                 body: "
                   <html>
                     <body>
