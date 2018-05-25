@@ -60,6 +60,9 @@ pipeline {
 
     string(name: 'GIT_TAG_SEARCH',             description: 'Search for Git Tag Record',                         defaultValue: 'rc')
     string(name: 'EMAIL_DST',                  description: 'Mail Notification Destination',                     defaultValue: 'aas.suhendar@gmail.com')
+    
+    string(name: 'JOB_NEXT_NAME',              description: 'Jenkins Next Job Name',                             defaultValue: 'Apps-API-DEV')
+    string(name: 'JOB_NEXT_TOKEN',             description: 'Jenkins Next Job Token',                            defaultValue: '1f6fbf41-409a-4a18-a377-c0335af9b967')
   }
 
   agent none
@@ -417,16 +420,28 @@ pipeline {
                 body: """
                   <html>
                     <body>
-                      <h2>Congratulation!</h2>
-                      <h3>Your New Image Tag Has Been Pushed</h3>
+                      <h3>Congratulation!</h3>
+                      <h4>Your New Image Tag Has Been Pushed</h4>
                       <br/>
                       <p>
-                        Image ${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName} Has Been Pushed Into ${params.DOCKER_DEV_REGISTRY_URL}</br>
-                        Please click the link below to promote the image, thank you.
+                        Information :<br/>
+                        <table border='0'>
+                          <tr>
+                            <td>Resgitry URL</td>
+                            <td><strong>${params.DOCKER_DEV_REGISTRY_URL}</strong></td>
+                          </tr>                        
+                          <tr>
+                            <td>Image Name</td>
+                            <td><strong>${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}</strong></td>
+                          </tr>
+                        </table>
                       </p>
                       <br/>
                       <p>
-                        <a href='#'>Promote This Image</a>
+                        Please click the link below to promote the image, thank you.<br/>
+                        <a href='https://jenkins.playcourt.id/job/${params.JOB_NEXT_NAME}/buildWithParameters?token=${params.JOB_NEXT_TOKEN}&IS_PROD=false&DOCKER_SRC_IMAGE_TAG=${gitTagName}'>
+                          <strong>Promote Image</strong>
+                        </a>
                       </p>
                     </body>
                   </html>
