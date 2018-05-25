@@ -51,7 +51,7 @@ pipeline {
       steps {
         script {
           echo "Cleaning-up Environment"
-          cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}")
+          cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}")
           cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest")
 
           echo "Checking-up Environment"
@@ -71,7 +71,7 @@ pipeline {
             sh "docker login --username='${params.KUBE_SRC_NAMESPACE}' --password='${params.DOCKER_SRC_REGISTRY_TOKEN}' ${params.DOCKER_SRC_REGISTRY_URL}"
 
             echo "Pulling Image from Docker Source Registry"
-            sh "docker pull ${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}"
+            sh "docker pull ${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}"
 
             echo "Loging-out from Docker Source Registry"
             sh "docker logout ${params.DOCKER_SRC_REGISTRY_URL}"
@@ -80,7 +80,7 @@ pipeline {
           } finally {
             if (flagCheck == false) {
               echo "Pulling Source Image: Failed, Exiting Pipeline"
-              cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}")
+              cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}")
               sh "docker logout ${params.DOCKER_SRC_REGISTRY_URL}"
 
               currentBuild.result = 'FAILURE'
@@ -101,15 +101,15 @@ pipeline {
             flagCheck = false
 
             echo "Re-tagging Source Image as Destination Image"
-            sh "docker tag ${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG} ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}"
-            sh "docker tag ${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG} ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest"
+            sh "docker tag ${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG} ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}"
+            sh "docker tag ${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG} ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest"
 
             flagCheck = true
           } finally {
             if (flagCheck == false) {
               echo "Re-tagging Source Image as Destination Image: Failed, Exiting Pipeline"
-              cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}")
-              cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}")
+              cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}")
+              cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}")
               cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest")
 
               currentBuild.result = 'FAILURE'
@@ -133,7 +133,7 @@ pipeline {
             sh "docker login --username='${params.KUBE_DST_NAMESPACE}' --password='${params.DOCKER_DST_REGISTRY_TOKEN}' ${params.DOCKER_DST_REGISTRY_URL}"
             
             echo "Pushing Image to Docker Destination Registry"
-            sh "docker push ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}"
+            sh "docker push ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}"
             sh "docker push ${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest"
 
             echo "Loging-out from Docker Destination Registry"
@@ -180,8 +180,8 @@ pipeline {
           } finally {
             if (flagCheck == false) {
               echo "Pushing Destination Image: Failed, Exiting Pipeline"
-              cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}")
-              cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}")
+              cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}")
+              cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}")
               cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest")
               sh "docker logout ${params.DOCKER_DST_REGISTRY_URL}"
 
@@ -200,7 +200,7 @@ pipeline {
       steps {
         script {
           echo "Cleaning-up Environment"
-          cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${param.DOCKER_SRC_IMAGE_TAG}")
+          cleanUpDocker("","${params.DOCKER_SRC_REGISTRY_URL}/${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}")
           cleanUpDocker("","${params.DOCKER_DST_REGISTRY_URL}/${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:latest")
         }
       }
