@@ -414,7 +414,7 @@ pipeline {
               emailext(
                 to: "${params.EMAIL_DST}",
                 subject: "Jenkins ${env.JOB_NAME}: New Image Tag Has Been Pushed",
-                body: "
+                body: """
                   <html>
                     <body>
                       <h2>Congratulation!</h2>
@@ -430,7 +430,7 @@ pipeline {
                       </p>
                     </body>
                   </html>
-                "
+                """
               )
             }
 
