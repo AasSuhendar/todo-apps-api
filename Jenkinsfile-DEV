@@ -61,7 +61,7 @@ pipeline {
     string(name: 'GIT_TAG_SEARCH',             description: 'Search for Git Tag Record',                         defaultValue: 'rc')
     string(name: 'EMAIL_DST',                  description: 'Mail Notification Destination',                     defaultValue: 'aas.suhendar@gmail.com')
     
-    string(name: 'JOB_NEXT_NAME',              description: 'Jenkins Next Job Name',                             defaultValue: 'Apps-API-DEV')
+    string(name: 'JOB_NEXT_NAME',              description: 'Jenkins Next Job Name',                             defaultValue: 'Apps-API-UAT')
     string(name: 'JOB_NEXT_TOKEN',             description: 'Jenkins Next Job Token',                            defaultValue: '1f6fbf41-409a-4a18-a377-c0335af9b967')
   }
 
