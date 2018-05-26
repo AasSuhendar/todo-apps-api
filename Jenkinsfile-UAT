@@ -23,25 +23,25 @@ def cleanUpDocker(containerName="", imageName="") {
   }  
 }
 
+// pipeline declarative
 pipeline {
   parameters {
-    booleanParam(name: 'IS_PROD',              description: 'Is This Pipeline for Production',        defaultValue: false)
+    booleanParam(name: 'IS_PROD',              description: 'Is This Pipeline for Production',           defaultValue: false)
     
-    string(name: 'KUBE_SRC_NAMESPACE',         description: 'Kubernetes Source Namespace',            defaultValue: 'playcourt-todo-dev')
-    string(name: 'DOCKER_SRC_REGISTRY_URL',    description: 'Docker Source Registry URL',             defaultValue: 'docker-registry-default.apps.playcourt.id')
-    string(name: 'DOCKER_SRC_REGISTRY_TOKEN',  description: 'Docker Source Registry Token',           defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby1kZXYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZG9ja2VyLXB1c2hlci10b2tlbi10ZHc4NSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkb2NrZXItcHVzaGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiN2Q4NTU3ZDItNWVmZi0xMWU4LTlhY2QtMDA1MDU2OGM1NmU1Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBsYXljb3VydC10b2RvLWRldjpkb2NrZXItcHVzaGVyIn0.oGgBQZLCv2CmAbMXK5is5ia_QiDIQ9h5f6_F6pSVyukwRSIuvCKQcGpo00y8AQukoeXplZlHj3unJdbO8QMC4p1Mt2xG32Fo6sRtbwqNgCe9GxfGMecMZWwmyEh2awZnIoXtOhE9Aa4M8Gtq9gOsIHGv_7dG-bSGVejQWITqqZmbMz-54RTE2ubskGrogRHwojWDU6FAHya3G0E73cqFWib6nQcoxseDn58lPagtHl0oEskoM5fowPUzsaMBML8UEfdmSMjuoGpdZQnsOg7CV-WZ1vIPExPXEJMcUmMii47ECqWiJpQ7B4GIXxhjTHwq_guZbn5Q6j0JYW90KX1t4g')
-    string(name: 'DOCKER_SRC_IMAGE_NAME',      description: 'Docker Source Image Name',               defaultValue: 'api')
-    string(name: 'DOCKER_SRC_IMAGE_TAG',       description: 'Docker Source Image Tag',                defaultValue: '')
+    string(name: 'KUBE_SRC_NAMESPACE',         description: 'Kubernetes Source Namespace',               defaultValue: 'playcourt-todo-dev')
+    string(name: 'DOCKER_SRC_REGISTRY_URL',    description: 'Docker Source Registry URL',                defaultValue: 'docker-registry-default.apps.playcourt.id')
+    string(name: 'DOCKER_SRC_REGISTRY_TOKEN',  description: 'Docker Source Registry Token',              defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby1kZXYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiamVua2lucy10b2tlbi10cHIxaiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJqZW5raW5zIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiYTliMzI5NGItNjBkZS0xMWU4LWJmNzMtMDA1MDU2OGMyZDUyIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBsYXljb3VydC10b2RvLWRldjpqZW5raW5zIn0.a1E3U-frnrpZCRByhy2YGDYTO-xRdcacfxVgduzTIN9rjGTPbjmwa24Q0i8IltwxTWUjodZOMekUYP5JLDrjGwYBIkiTATG4bSAYKDaSwTTaRFFmxhQjd9YZCwrl71GAItMX1tBUtnN6B2CaTlMDh3w7N9-i8furYPHDRVP383g0XQsC8e6H6Lu6FxEzpq5MEnr1P_90Euuu8SeTWjGk6ERW9CAUzslGQBl3fSntSEvkRQwGDEmuEkYcD11tr715wLi2qXe-4H53Q0IrJVieCk_6AZfFk5mypYioz1-eFfvFOAkfwAnWjUbC-f4yUQf7Kcpeaqr4TbXxQYAyfvdHAw')
+    string(name: 'DOCKER_SRC_IMAGE_NAME',      description: 'Docker Source Image Name',                  defaultValue: 'api')
+    string(name: 'DOCKER_SRC_IMAGE_TAG',       description: 'Docker Source Image Tag',                   defaultValue: '')
 
-    string(name: 'KUBE_DST_NAMESPACE',        description: 'Kubernetes Destination Namespace',        defaultValue: 'playcourt-todo-uat')
-    string(name: 'DOCKER_DST_REGISTRY_URL',   description: 'Docker Destination Registry URL',         defaultValue: 'docker-registry-default.apps.playcourt.id')
-    string(name: 'DOCKER_DST_REGISTRY_TOKEN', description: 'Docker Destination Registry Token',       defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby11YXQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZG9ja2VyLXB1c2hlci10b2tlbi0yOTdnbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkb2NrZXItcHVzaGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNDBiMzZhMWItNWYwMC0xMWU4LWJmNzMtMDA1MDU2OGMyZDUyIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBsYXljb3VydC10b2RvLXVhdDpkb2NrZXItcHVzaGVyIn0.oJC3fgi7XjbBDHJpt5H4JvRdZl_t3egtRNQ03swh2IZLqd7VTcDiu9JqxSNq8Yv6BZWz6sC5TdVCkx68BHqjelmULmdLPAd13acc4biz5d-CZUfb_qOXXfwjlA1jyAenpPiPwlp0OTBf7whSkUE2--LXNkikGdHIVIL5wQQQXOXu8mFEIaSgD0DUvSts6MFBLQWLkEV3rIGV3aha_69Xkd5C5vpUB3efNadNg5RuExLhdegkFIZhiamTcNMmUUWTpdMJo7rqippYgcE5vv9HvonNNjQ_q8iZqiEPHepdopMAV4QDftMv6NMZt3kYbsxOYMAWeAWOu4dxQhCmUehOrA')
-    string(name: 'DOCKER_DST_IMAGE_NAME',     description: 'Docker Destination Image Name',           defaultValue: 'api')
+    string(name: 'KUBE_DST_NAMESPACE',         description: 'Kubernetes Destination Namespace',          defaultValue: 'playcourt-todo-uat')
+    string(name: 'DOCKER_DST_REGISTRY_URL',    description: 'Docker Destination Registry URL',           defaultValue: 'docker-registry-default.apps.playcourt.id')
+    string(name: 'DOCKER_DST_REGISTRY_TOKEN',  description: 'Docker Destination Registry Token',         defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby11YXQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiamVua2lucy10b2tlbi14NXMwayIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJqZW5raW5zIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiOTc2YTI2YjAtNjBkZS0xMWU4LWFmZmMtMDA1MDU2OGM0YzQyIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBsYXljb3VydC10b2RvLXVhdDpqZW5raW5zIn0.E7SRQMytCLR9xvrkmdHKgtYQj_vCN35bSvG0R8kBA7kpSBU-jjM78c8WJ6y8kSRrpqIcnLx6QLGsH6qxpMt9_5X8uXAU2rXJKzDR07ZYcHG78uuFDQSkOIvUnu6aXx9NBQPNaAk7dwF_glGUVFnzKTkbcF3GyP-Cj99XfgxvxDQI8Yqa6EPm_pXMLDhcnpLmdksYWOgH-2VxyP1ndQSckaad0yoUtsTRszmkWvrCchJGJL8Ld8JC4aKktqAlGh7UB3gfuAUMb7t1bptKQCASDm9QqcqQDusp5aNNy8j3MgTD8jcWV6lJb4k9mixCYwm0dmaI6FsRoLrH8Ddj2Kbitg')
+    string(name: 'DOCKER_DST_IMAGE_NAME',      description: 'Docker Destination Image Name',             defaultValue: 'api')
 
-    string(name: 'EMAIL_DST',                  description: 'Mail Notification Destination',          defaultValue: 'aas.suhendar@gmail.com')
-
-    string(name: 'JOB_NEXT_NAME',              description: 'Jenkins Next Job Name',                  defaultValue: '')
-    string(name: 'JOB_NEXT_TOKEN',             description: 'Jenkins Next Job Token',                 defaultValue: '')    
+    string(name: 'JOB_NOTIF_MAIL_DST',         description: 'Jenkins Job Mail Notification Destination', defaultValue: '')
+    string(name: 'JOB_NEXT_NAME',              description: 'Jenkins Next Job Name',                     defaultValue: '')
+    string(name: 'JOB_NEXT_TOKEN',             description: 'Jenkins Next Job Token',                    defaultValue: '')
   }
 
   agent none
@@ -139,35 +139,35 @@ pipeline {
             echo "Loging-out from Docker Destination Registry"
             sh "docker logout ${params.DOCKER_DST_REGISTRY_URL}"
 
-            if (params.IS_PROD) {
-              echo "Sending Mail Notification for New Image Tag"
+            if (! params.IS_PROD && ! params.JOB_NOTIF_MAIL_DST.equals('') && ! params.JOB_NEXT_NAME.equals('') && ! params.JOB_NEXT_TOKEN.equals('')) {
+              echo "Sending Mail Notification for Pushed Image with New Tag"
               emailext(
-                to: "${params.EMAIL_DST}",
-                subject: "Jenkins ${env.JOB_NAME}: New Image Tag Has Been Pushed",
+                to: "${params.JOB_NOTIF_MAIL_DST}",
+                subject: "Jenkins ${env.JOB_NAME}: An Image With New Tag Has Been Pushed",
                 body: """
                   <html>
                     <body>
                       <h3>Congratulation!</h3>
-                      <h4>Your New Image Tag Has Been Pushed</h4>
+                      <h4>An Image With New Tag Has Been Pushed</h4>
                       <br/>
                       <p>
                         Information :<br/>
                         <table border='0'>
                           <tr>
-                            <td>Resgitry URL</td>
-                            <td><strong>${params.DOCKER_SRC_REGISTRY_URL}</strong></td>
+                            <td>Registry URL</td>
+                            <td>: <strong>${params.DOCKER_SRC_REGISTRY_URL}</strong></td>
                           </tr>                        
                           <tr>
                             <td>Image Name</td>
-                            <td><strong>${params.KUBE_SRC_NAMESPACE}/${params.DOCKER_SRC_IMAGE_NAME}:${params.DOCKER_SRC_IMAGE_TAG}</strong></td>
+                            <td>: <strong>${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${params.DOCKER_DST_IMAGE_TAG}</strong></td>
                           </tr>
                         </table>
                       </p>
                       <br/>
                       <p>
                         Please click the link below to promote the image, thank you.<br/>
-                        <a href='https://jenkins.playcourt.id/job/${params.JOB_NEXT_NAME}/buildWithParameters?token=${params.JOB_NEXT_TOKEN}&IS_PROD=true&DOCKER_SRC_IMAGE_TAG=${params.DOCKER_SRC_IMAGE_TAG}'>
-                          <strong>Promote Image</strong>
+                        <a href='https://jenkins.playcourt.id/job/${params.JOB_NEXT_NAME}/buildWithParameters?token=${params.JOB_NEXT_TOKEN}&DOCKER_SRC_IMAGE_TAG=${params.DOCKER_SRC_IMAGE_TAG}&IS_PROD=true'>
+                          <strong>Promote Image: ${params.KUBE_DST_NAMESPACE}/${params.DOCKER_DST_IMAGE_NAME}:${params.DOCKER_DST_IMAGE_TAG}</strong>
                         </a>
                       </p>
                     </body>
