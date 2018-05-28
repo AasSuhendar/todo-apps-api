@@ -364,6 +364,7 @@ pipeline {
 
             echo "Run Integration Test"
             sh "docker exec ${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG} npm run integration"
+            sh "docker cp ${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}:/usr/src/app/cucumber.json ."
             
             flagCheck = true
           } finally {
