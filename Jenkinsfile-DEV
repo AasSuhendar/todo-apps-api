@@ -47,12 +47,9 @@ def cleanUpDocker(containerName="", imageName="") {
 // pipeline declarative
 pipeline {
   parameters {
-
     string(name: 'KUBE_DEV_NAMESPACE',         description: 'Kubernetes Development Namespace',                  defaultValue: 'playcourt-todo-dev')
-    
     string(name: 'DOCKER_DEV_REGISTRY_URL',    description: 'Docker Development Registry URL',                   defaultValue: 'docker-registry-default.apps.playcourt.id')
-    string(name: 'DOCKER_DEV_REGISTRY_TOKEN',  description: 'Docker Development Registry Token',                 defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby1kZXYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiZG9ja2VyLXB1c2hlci10b2tlbi10ZHc4NSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkb2NrZXItcHVzaGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiN2Q4NTU3ZDItNWVmZi0xMWU4LTlhY2QtMDA1MDU2OGM1NmU1Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBsYXljb3VydC10b2RvLWRldjpkb2NrZXItcHVzaGVyIn0.oGgBQZLCv2CmAbMXK5is5ia_QiDIQ9h5f6_F6pSVyukwRSIuvCKQcGpo00y8AQukoeXplZlHj3unJdbO8QMC4p1Mt2xG32Fo6sRtbwqNgCe9GxfGMecMZWwmyEh2awZnIoXtOhE9Aa4M8Gtq9gOsIHGv_7dG-bSGVejQWITqqZmbMz-54RTE2ubskGrogRHwojWDU6FAHya3G0E73cqFWib6nQcoxseDn58lPagtHl0oEskoM5fowPUzsaMBML8UEfdmSMjuoGpdZQnsOg7CV-WZ1vIPExPXEJMcUmMii47ECqWiJpQ7B4GIXxhjTHwq_guZbn5Q6j0JYW90KX1t4g')
-
+    string(name: 'DOCKER_DEV_REGISTRY_TOKEN',  description: 'Docker Development Registry Token',                 defaultValue: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwbGF5Y291cnQtdG9kby1kZXYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiamVua2lucy10b2tlbi10cHIxaiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJqZW5raW5zIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiYTliMzI5NGItNjBkZS0xMWU4LWJmNzMtMDA1MDU2OGMyZDUyIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBsYXljb3VydC10b2RvLWRldjpqZW5raW5zIn0.a1E3U-frnrpZCRByhy2YGDYTO-xRdcacfxVgduzTIN9rjGTPbjmwa24Q0i8IltwxTWUjodZOMekUYP5JLDrjGwYBIkiTATG4bSAYKDaSwTTaRFFmxhQjd9YZCwrl71GAItMX1tBUtnN6B2CaTlMDh3w7N9-i8furYPHDRVP383g0XQsC8e6H6Lu6FxEzpq5MEnr1P_90Euuu8SeTWjGk6ERW9CAUzslGQBl3fSntSEvkRQwGDEmuEkYcD11tr715wLi2qXe-4H53Q0IrJVieCk_6AZfFk5mypYioz1-eFfvFOAkfwAnWjUbC-f4yUQf7Kcpeaqr4TbXxQYAyfvdHAw')
     string(name: 'DOCKER_IMAGE_NAME',          description: 'Docker Image Name',                                 defaultValue: 'api')
     string(name: 'DOCKER_IMAGE_TAG',           description: 'Docker Image Tag',                                  defaultValue: 'latest')
 
@@ -60,11 +57,10 @@ pipeline {
     string(name: 'CONTAINER_ENV',              description: 'Container Environment List (Seperate with Commas)', defaultValue: 'NODE_ENV=test')
 
     string(name: 'GIT_TAG_SEARCH',             description: 'Search for Git Tag Record',                         defaultValue: 'rc')
-    string(name: 'EMAIL_DST',                  description: 'Mail Notification Destination',                     defaultValue: 'aas.suhendar@gmail.com')
-    
+
+    string(name: 'JOB_NOTIF_MAIL_DST',         description: 'Jenkins Job Mail Notification Destination',         defaultValue: 'dimas.restu@student.upi.edu')
     string(name: 'JOB_NEXT_NAME',              description: 'Jenkins Next Job Name',                             defaultValue: 'Apps-API-UAT')
     string(name: 'JOB_NEXT_TOKEN',             description: 'Jenkins Next Job Token',                            defaultValue: '1f6fbf41-409a-4a18-a377-c0335af9b967')
-  
   }
 
   agent none
@@ -368,6 +364,9 @@ pipeline {
 
             echo "Run Integration Test"
             sh "docker exec ${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG} npm run integration"
+            sh "docker cp ${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}:/usr/src/app/cucumber.json ."
+            livingDocs featuresDir: './cucumber.json'
+            
             
             flagCheck = true
           } finally {
@@ -414,35 +413,35 @@ pipeline {
             echo "Logging-out from Private Registry"
             sh "docker logout ${params.DOCKER_DEV_REGISTRY_URL}"
 
-            if (gitHeadMatch) {
-              echo "Sending Mail Notification for New Image Tag"
+            if (gitHeadMatch && ! params.JOB_NOTIF_MAIL_DST.equals('') && ! params.JOB_NEXT_NAME.equals('') && ! params.JOB_NEXT_TOKEN.equals('')) {
+              echo "Sending Mail Notification for Pushed Image with New Tag"
               emailext(
-                to: "${params.EMAIL_DST}",
-                subject: "Jenkins ${env.JOB_NAME}: New Image Tag Has Been Pushed",
+                to: "${params.JOB_NOTIF_MAIL_DST}",
+                subject: "Jenkins ${env.JOB_NAME}: An Image With New Tag Has Been Pushed",
                 body: """
                   <html>
                     <body>
                       <h3>Congratulation!</h3>
-                      <h4>Your New Image Tag Has Been Pushed</h4>
+                      <h4>An Image With New Tag Has Been Pushed</h4>
                       <br/>
                       <p>
                         Information :<br/>
                         <table border='0'>
                           <tr>
-                            <td>Resgitry URL</td>
-                            <td><strong>${params.DOCKER_DEV_REGISTRY_URL}</strong></td>
+                            <td>Registry URL</td>
+                            <td>: <strong>${params.DOCKER_DEV_REGISTRY_URL}</strong></td>
                           </tr>                        
                           <tr>
                             <td>Image Name</td>
-                            <td><strong>${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}</strong></td>
+                            <td>: <strong>${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}</strong></td>
                           </tr>
                         </table>
                       </p>
                       <br/>
                       <p>
                         Please click the link below to promote the image, thank you.<br/>
-                        <a href='https://jenkins.playcourt.id/job/${params.JOB_NEXT_NAME}/buildWithParameters?token=${params.JOB_NEXT_TOKEN}&IS_PROD=false&DOCKER_SRC_IMAGE_TAG=${gitTagName}'>
-                          <strong>Promote Image</strong>
+                        <a href='https://jenkins.playcourt.id/job/${params.JOB_NEXT_NAME}/buildWithParameters?token=${params.JOB_NEXT_TOKEN}&DOCKER_SRC_IMAGE_TAG=${gitTagName}&IS_PROD=false'>
+                          <strong>Promote Image: ${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}</strong>
                         </a>
                       </p>
                     </body>
