@@ -15,6 +15,9 @@ nodemon
 # run testing
 npm run test
 
+# Cucumber Testing
+npm run integration
+
 ```
 
 readme updated
