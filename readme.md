@@ -20,4 +20,19 @@ npm run integration
 
 ```
 
+#Jenkinsfile
+This Jenkinsfile use a declarative pipeline that push to image registry at the of the pipeline.
+In this Jenkinsfile there are some stage which is:
+1. Initialize
+2. Checkout SCM
+3. Unit Test & Analysis
+4. Contenarized
+5. Container Test
+6. Integration Test
+7. Pushing Image to Private Registry
+8. Finalize
+
+#SonarQube
+This repo is already include with sonar.project.properties
+
 readme updated
