@@ -35,4 +35,5 @@ In this Jenkinsfile there are some stage which is:
 #SonarQube
 This repo is already include with sonar.project.properties
 
-readme updated
+readme updated.
+Any Question ? ask admin
