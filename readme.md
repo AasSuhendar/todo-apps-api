@@ -34,5 +34,4 @@ In this Jenkinsfile there are some stage which is:
 
 #SonarQube
 This repo is already include with sonar.project.properties
-
 Any Question ? ask admin
