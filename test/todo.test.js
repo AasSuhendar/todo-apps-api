@@ -20,7 +20,7 @@ describe('Evaluasi API todos' , () => {
       request(server).get('/api/todo-list')
         .expect(200)
         .end((err, res) => {
-          expect(res.statusCode).toBe(400)
+          expect(res.statusCode).toBe(200)
           expect(res.body).toHaveProperty('message', 'Get list todo successfuly')
           expect(res.body).toHaveProperty('code', 'GET-LIST-TODO')
           expect(res.body).toHaveProperty('status', true)
