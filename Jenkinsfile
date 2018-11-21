@@ -54,7 +54,7 @@ pipeline {
     string(name: 'DOCKER_IMAGE_TAG',           description: 'Docker Image Tag',                                  defaultValue: 'latest')
 
     string(name: 'CONTAINER_PORT',             description: 'Container Port List (Seperate with Commas)',        defaultValue: '3000')
-    string(name: 'CONTAINER_ENV',              description: 'Container Environment List (Seperate with Commas)', defaultValue: 'NODE_ENV=test')
+    string(name: 'CONTAINER_ENV',              description: 'Container Environment List (Seperate with Commas)', defaultValue: 'NODE_ENV=database_test')
 
     string(name: 'GIT_TAG_SEARCH',             description: 'Search for Git Tag Record',                         defaultValue: 'rc')
 
@@ -364,11 +364,11 @@ pipeline {
 
             echo "Run Integration Test"
             sh "docker exec ${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG} npm run integration"
-            sh "docker cp ${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}:/usr/src/app/cucumber.json ."
-            livingDocs featuresDir: './'
             flagCheck = true
 
           } finally {
+            sh "docker cp ${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}:/usr/src/app/cucumber.json ."
+            livingDocs featuresDir: './'
             if (flagCheck == false) {
               echo "Integration Test: Failed, Exiting Pipeline"
               cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
@@ -383,89 +383,89 @@ pipeline {
       }
     }
 
-    stage("Pushing Image to Private Registry") {
-      agent { label "jenkins-agent-docker-1" }
-      steps {
-        script {
-          try {
-            flagCheck = false
+    // stage("Pushing Image to Private Registry") {
+    //   agent { label "jenkins-agent-docker-1" }
+    //   steps {
+    //     script {
+    //       try {
+    //         flagCheck = false
 
-            echo "Cleaning-up Docker"
-            cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}")
+    //         echo "Cleaning-up Docker"
+    //         cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}")
 
-            echo "Logging-in to Private Registry"
-            sh "docker login --username='${params.KUBE_DEV_NAMESPACE}' --password='${params.DOCKER_DEV_REGISTRY_TOKEN}' ${params.DOCKER_DEV_REGISTRY_URL}"
+    //         echo "Logging-in to Private Registry"
+    //         sh "docker login --username='${params.KUBE_DEV_NAMESPACE}' --password='${params.DOCKER_DEV_REGISTRY_TOKEN}' ${params.DOCKER_DEV_REGISTRY_URL}"
 
-            if (gitHeadMatch) {
-              echo "Creating Image Tag With Git Tag Name"
-              sh "docker tag ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG} ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}"
-            } else {
-              echo "Creating Image Tag With Git Tag Name: Skipping, Git Master HEAD Not Equal With Git Latest Tag HEAD"
-            }
+    //         if (gitHeadMatch) {
+    //           echo "Creating Image Tag With Git Tag Name"
+    //           sh "docker tag ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG} ${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}"
+    //         } else {
+    //           echo "Creating Image Tag With Git Tag Name: Skipping, Git Master HEAD Not Equal With Git Latest Tag HEAD"
+    //         }
 
-            echo "Pushing Image to Private Registry"
-            sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
-            if (gitHeadMatch) {
-              sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}'"
-            }
+    //         echo "Pushing Image to Private Registry"
+    //         sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}'"
+    //         if (gitHeadMatch) {
+    //           sh "docker push '${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}'"
+    //         }
 
-            echo "Logging-out from Private Registry"
-            sh "docker logout ${params.DOCKER_DEV_REGISTRY_URL}"
+    //         echo "Logging-out from Private Registry"
+    //         sh "docker logout ${params.DOCKER_DEV_REGISTRY_URL}"
 
-            if (gitHeadMatch && ! params.JOB_NOTIF_MAIL_DST.equals('') && ! params.JOB_NEXT_NAME.equals('') && ! params.JOB_NEXT_TOKEN.equals('')) {
-              echo "Sending Mail Notification for Pushed Image with New Tag"
-              emailext(
-                to: "${params.JOB_NOTIF_MAIL_DST}",
-                subject: "Jenkins ${env.JOB_NAME}: An Image With New Tag Has Been Pushed",
-                body: """
-                  <html>
-                    <body>
-                      <h3>Congratulation!</h3>
-                      <h4>An Image With New Tag Has Been Pushed</h4>
-                      <br/>
-                      <p>
-                        Information :<br/>
-                        <table border='0'>
-                          <tr>
-                            <td>Registry URL</td>
-                            <td>: <strong>${params.DOCKER_DEV_REGISTRY_URL}</strong></td>
-                          </tr>                        
-                          <tr>
-                            <td>Image Name</td>
-                            <td>: <strong>${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}</strong></td>
-                          </tr>
-                        </table>
-                      </p>
-                      <br/>
-                      <p>
-                        Please click the link below to promote the image, thank you.<br/>
-                        <a href='https://jenkins.playcourt.id/job/${params.JOB_NEXT_NAME}/buildWithParameters?token=${params.JOB_NEXT_TOKEN}&DOCKER_SRC_IMAGE_TAG=${gitTagName}&IS_PROD=false'>
-                          <strong>Promote Image: ${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}</strong>
-                        </a>
-                      </p>
-                    </body>
-                  </html>
-                """
-              )
-            }
+    //         if (gitHeadMatch && ! params.JOB_NOTIF_MAIL_DST.equals('') && ! params.JOB_NEXT_NAME.equals('') && ! params.JOB_NEXT_TOKEN.equals('')) {
+    //           echo "Sending Mail Notification for Pushed Image with New Tag"
+    //           emailext(
+    //             to: "${params.JOB_NOTIF_MAIL_DST}",
+    //             subject: "Jenkins ${env.JOB_NAME}: An Image With New Tag Has Been Pushed",
+    //             body: """
+    //               <html>
+    //                 <body>
+    //                   <h3>Congratulation!</h3>
+    //                   <h4>An Image With New Tag Has Been Pushed</h4>
+    //                   <br/>
+    //                   <p>
+    //                     Information :<br/>
+    //                     <table border='0'>
+    //                       <tr>
+    //                         <td>Registry URL</td>
+    //                         <td>: <strong>${params.DOCKER_DEV_REGISTRY_URL}</strong></td>
+    //                       </tr>                        
+    //                       <tr>
+    //                         <td>Image Name</td>
+    //                         <td>: <strong>${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}</strong></td>
+    //                       </tr>
+    //                     </table>
+    //                   </p>
+    //                   <br/>
+    //                   <p>
+    //                     Please click the link below to promote the image, thank you.<br/>
+    //                     <a href='https://jenkins.playcourt.id/job/${params.JOB_NEXT_NAME}/buildWithParameters?token=${params.JOB_NEXT_TOKEN}&DOCKER_SRC_IMAGE_TAG=${gitTagName}&IS_PROD=false'>
+    //                       <strong>Promote Image: ${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}</strong>
+    //                     </a>
+    //                   </p>
+    //                 </body>
+    //               </html>
+    //             """
+    //           )
+    //         }
 
-            flagCheck = true
-          } finally {
-            if (flagCheck == false) {
-              echo "Pushing Image to Private Registry: Failed, Exiting Pipeline"
-              cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
-              cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
-              sh "docker logout ${params.DOCKER_DEV_REGISTRY_URL}"
+    //         flagCheck = true
+    //       } finally {
+    //         if (flagCheck == false) {
+    //           echo "Pushing Image to Private Registry: Failed, Exiting Pipeline"
+    //           cleanUpDocker("", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${gitTagName}")
+    //           cleanUpDocker("${params.KUBE_DEV_NAMESPACE}-${params.DOCKER_IMAGE_NAME}-${params.DOCKER_IMAGE_TAG}", "${params.DOCKER_DEV_REGISTRY_URL}/${params.KUBE_DEV_NAMESPACE}/${params.DOCKER_IMAGE_NAME}:${params.DOCKER_IMAGE_TAG}")
+    //           sh "docker logout ${params.DOCKER_DEV_REGISTRY_URL}"
 
-              currentBuild.result = 'FAILURE'
-              sh "exit 1"
-            } else {
-              echo "Pushing Image to Private Registry: Success, Continuing Pipeline"
-            }
-          }
-        }
-      }
-    }
+    //           currentBuild.result = 'FAILURE'
+    //           sh "exit 1"
+    //         } else {
+    //           echo "Pushing Image to Private Registry: Success, Continuing Pipeline"
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
     stage("Finalize") {
       parallel {
