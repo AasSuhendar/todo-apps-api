@@ -115,3 +115,33 @@ Then('Sistem merubah pekerjaan tersebut dan menampilkan pesan {string}', functio
   expect(this.getReturnMessage()).to.equal(string)
   callback()
 })
+
+Given('Melani memiliki pekerjaan yang harus dimasukan ke sistem dengan judul <name>', function (callback) {
+  callback();
+})
+
+When('Melani memasukan <description> pekerjaan dan <status>', function (callback) {
+  callback();
+});
+
+Then('Sistem menyimpan pekerjaan tersebut dan menampilkan pesan <msg>', function (dataTable, callback) {
+  dataTable.hashes().forEach((todo, idx) => {
+    request(server).post('/api/todo-list')
+      .send(todo)
+      .expect(200)
+      .end((err, res) => {
+        expect(res.statusCode).to.equal(200)
+        expect(res.body).to.have.property('message', 'Insert new todo successfuly')
+        expect(res.body).to.have.property('code', 'INSERT-TODO')
+        expect(res.body).to.have.property('status', true)
+        expect(res.body.data).to.have.property('name', todo.name)
+        expect(res.body.data).to.have.property('description', todo.description)
+        expect(res.body.data).to.have.property('status', todo.status)
+        
+      })
+
+    if (idx === dataTable.hashes().length - 1) {
+      callback()
+    }
+  });
+});

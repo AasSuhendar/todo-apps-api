@@ -38,3 +38,14 @@ Fitur: Todo
     Dengan Melani ingin menghapus pekerjaannya yang ada di sistem yang bernama "Menyiapkan ruang rapat"
     Ketika Melani melakukan DELETE request ke sistem "/api/todo-list/"
     Maka Sistem menghapus pekerjaan tersebut dan menampilkan pesan "Delete new todo successfuly"
+  
+  Skenario: Membuat banyak pekerjaan baru
+    Dengan Melani memiliki pekerjaan yang harus dimasukan ke sistem dengan judul <name>
+    Ketika Melani memasukan <description> pekerjaan dan <status>
+    Maka Sistem menyimpan pekerjaan tersebut dan menampilkan pesan <msg>
+
+    #TableRow:
+      | name | description | status | msg |
+      | Todo A  | Desc Todo A      | Todo | "Insert new todo successfuly" |
+      | Todo B  | Desc Todo B       | On Going | "Insert new todo successfuly" |
+      

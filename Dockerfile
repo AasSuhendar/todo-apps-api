@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 
 # Cached layer for node modules
 ADD package.json /tmp/package.json
-RUN cd /tmp && npm install
+RUN cd /tmp && npm i -g npm && npm install
 RUN mkdir -p /usr/src/app \
   && cp -a /tmp/node_modules /usr/src/app
 
