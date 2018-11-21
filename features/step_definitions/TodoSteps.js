@@ -20,7 +20,7 @@ When('Melani memasukan pekerjaan:', function (newTodo, done) {
     .expect(200)
     .end((err, res) => {
       this.setReturnMessage(res.body.message)
-      expect(res.statusCode).to.equal(400)
+      expect(res.statusCode).to.equal(200)
       expect(res.body).to.have.property('message', 'Insert new todo successfuly')
       expect(res.body).to.have.property('code', 'INSERT-TODO')
       expect(res.body).to.have.property('status', true)
@@ -144,4 +144,5 @@ Then('Sistem menyimpan pekerjaan tersebut dan menampilkan pesan <msg>', function
       callback()
     }
   });
+  
 });
