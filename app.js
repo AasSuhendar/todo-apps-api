@@ -4,7 +4,7 @@ var logger = require('morgan')
 var cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
-var Promise = require('bluebird')
+var promise = require('bluebird')
 var env = require('./config/env')
 
 var index = require('./routes/index')
@@ -12,7 +12,7 @@ var todos = require('./routes/todos')
 
 var app = express()
 
-Promise.promisifyAll(mongoose)
+promise.promisifyAll(mongoose)
 mongoose.Promise = global.Promise
 
 app.use(function (req, res, next) {
