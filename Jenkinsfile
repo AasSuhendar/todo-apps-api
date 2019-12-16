@@ -63,7 +63,7 @@ pipeline {
                             def node = tool name: 'NodeJS-8.9', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
                             env.PATH = "${node}/bin:${env.PATH}"
                             sh "npm install"
-                            sh "npm run coverage"
+                            sh "npm run test"
                             echo "defining sonar-scanner"
                             def scannerHome = tool 'SonarScanner' ;
                             withSonarQubeEnv('SonarQube') {
