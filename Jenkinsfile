@@ -65,6 +65,7 @@ pipeline {
                             sh "npm install"
                             sh "npm run test"
                             sh "npm run coverage"
+                            sh "ls -alh"
                             echo "defining sonar-scanner"
                             def scannerHome = tool 'SonarScanner' ;
                             withSonarQubeEnv('SonarQube') {
