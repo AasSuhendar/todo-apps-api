@@ -161,3 +161,273 @@
 //     })
 //   })
 // })
+
+
+const todo_controller = require('../apps/controllers/ToDo-controller')
+const sinon = require('sinon')
+const Todo =  require('../apps/models/ToDo')
+var chai = require('chai')
+var expect = chai.expect
+var { mockReq, mockRes } = require('sinon-express-mock')
+
+process.env.NODE_ENV = 'test'
+
+describe('Todos Controllers', function () {
+    describe('GET - getAllTodos controller route /api/todo', function () {
+
+        beforeEach(function () {
+            TodoStub = sinon.stub(Todo, 'find')
+        })
+
+        afterEach(() => {
+            TodoStub.restore()
+        })
+
+        it('should return json message success', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {}
+            
+            TodoStub.yields(true,null)
+            expect(await todo_controller.getAllTodos(req, res))
+        });
+
+        it('should return json message failed', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {}
+            
+            TodoStub.yields(false,[{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}])
+            expect(await todo_controller.getAllTodos(req, res))
+            
+        });
+    });
+
+    describe('GET - getTodosById controller route /api/todo/:id', function () {
+
+        beforeEach(function () {
+            TodoStub = sinon.stub(Todo, 'findById')
+        })
+
+        afterEach(() => {
+            TodoStub.restore()
+        })
+
+        it('should return json message success', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {
+                params: {
+                    id: 1
+                }
+            }
+            
+            TodoStub.yields(true,null)
+            expect(await todo_controller.getTodosById(req, res))
+        });
+
+        it('should return json message failed', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {
+                params: {
+                    id: 1
+                }
+            }
+            
+            TodoStub.yields(false,[{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}])
+            expect(await todo_controller.getTodosById(req, res))
+            
+        });
+    });
+
+    describe('POST - insertTodo controller route /api/todo/', function () {
+
+        beforeEach(function () {
+            TodoStub = sinon.mock(Todo.prototype)
+        })
+
+        afterEach(() => {
+            TodoStub.restore()
+        })
+
+        it('should return json message success', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {
+                body: {
+                    name: "Todo 1",
+                    description: "Desc Todo 1",
+                    status: "Backlog",
+                }
+            }
+            
+            TodoStub.expects('save').yields(true,null)
+            expect(await todo_controller.insertTodo(req, res))
+        });
+
+        it('should return json message failed', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {
+                body: {
+                    name: "Todo 1",
+                    description: "Desc Todo 1",
+                    status: "Backlog",
+                }
+            }
+            
+            TodoStub.expects('save').yields(false,[{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}])
+            expect(await todo_controller.insertTodo(req, res))
+            
+        });
+    });
+
+    describe('PUT - updateTodo controller route /api/todo/:id', function () {
+
+        beforeEach(function () {
+            TodoStub = sinon.stub(Todo, 'findByIdAndUpdate')
+        })
+
+        afterEach(() => {
+            TodoStub.restore()
+        })
+
+        it('should return json message success', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {
+                body: {
+                    name: "Todo 1",
+                    description: "Desc Todo 1",
+                    status: "Backlog",
+                },
+                params: 1
+            }
+            
+            TodoStub.yields(true,null)
+            expect(await todo_controller.updateTodo(req, res))
+        });
+
+        it('should return json message failed', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {
+                body: {
+                    name: "Todo 1",
+                    description: "Desc Todo 1",
+                    status: "Backlog",
+                },
+                params: 1
+            }
+            
+            TodoStub.yields(false,[{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}])
+            expect(await todo_controller.updateTodo(req, res))
+            
+        });
+    });
+
+    describe('DEL - deleteTodo controller route /api/todo/:id', function () {
+
+        beforeEach(function () {
+            TodoStub = sinon.stub(Todo, 'remove')
+        })
+
+        afterEach(() => {
+            TodoStub.restore()
+        })
+
+        it('should return json message success', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {
+                params: 1
+            }
+            
+            TodoStub.yields(true,null)
+            expect(await todo_controller.deleteTodo(req, res))
+        });
+
+        it('should return json message failed', async function () {
+            let res = {
+                json: {
+                    status: true,
+                    code: 'GET-LIST-TODO',
+                    message: 'Get list todo successfuly',
+                    data: [{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}]
+                },
+                status: sinon.stub().returns({ json: sinon.spy() })
+            };
+            let req = {
+                params: 1
+            }
+            
+            TodoStub.yields(false,[{id:1, name:"todo1", status:"Backlog"}, {id:2, name:"todo2", status:"Backlog"}])
+            expect(await todo_controller.deleteTodo(req, res))
+            
+        });
+    });
+});

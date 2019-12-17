@@ -32,7 +32,7 @@ var { mockReq, mockRes } = require('sinon-express-mock')
 process.env.NODE_ENV = 'test'
 
 describe('Controllers Index', function () {
-    describe('Main controller route /', function () {
+    describe('Todo controller route /', function () {
         it('should return json message', function () {
             let res = {
                 json: {
