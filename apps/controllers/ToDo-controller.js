@@ -3,14 +3,14 @@ var ToDo = require('../models/ToDo')
 let getAllTodos = async (req,res) => {
   ToDo.find({}, (err, todos) => {
     if (err) {
-      res.status(500).json({
+      return res.status(500).json({
         status: false,
         code: 'GET-LIST-TODO',
         message: 'Get list todo failed',
         error: err
       })
     } else {
-      res.status(200).json({
+      return res.status(200).json({
         status: true,
         code: 'GET-LIST-TODO',
         message: 'Get list todo successfuly',
