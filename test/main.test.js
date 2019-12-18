@@ -27,12 +27,10 @@ const main = require('../apps/controllers/Index-controllers')
 const sinon = require('sinon')
 var chai = require('chai')
 var expect = chai.expect
-var { mockReq, mockRes } = require('sinon-express-mock')
-
 process.env.NODE_ENV = 'test'
 
 describe('Controllers Index', function () {
-    describe('Main controller route /', function () {
+    describe('Todo controller route /', function () {
         it('should return json message', function () {
             let res = {
                 json: {
@@ -44,9 +42,6 @@ describe('Controllers Index', function () {
             };
             let req = {}
 
-            // const req = mockReq({})
-            // const res = mockRes(response)
-            
             main.getIndex(req, res)
             
             expect(res.json.status).to.equal(true);
