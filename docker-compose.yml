@@ -1,0 +1,42 @@
+version: '3.7'
+
+volumes:
+  mongodbdata_todos: {}
+
+networks:
+  todos-net:
+    driver: bridge
+
+services:
+  mongodb:
+    image: telkomindonesia/alpine:mongodb-3.6
+    networks:
+      - todos-net
+    ports:
+      - 27017:27017
+    environment:
+      - MONGODB_USER=user
+      - MONGODB_PASSWORD=password
+      - MONGODB_ADMIN_PASSWORD=password
+      - MONGODB_DATABASE=todos
+    volumes:
+      - mongodbdata_todos:/var/lib/mongodb/data
+    restart: always
+
+  todo-apps-api:
+    build: .
+    image: aassuhendar/todo-apps-api:latest
+    networks:
+      - todos-net
+    ports:
+      - 3000:3000
+    environment:
+      - MONGO_URL=mongodb://user:password@mongodb/todos
+      - NODE_ENV=dev
+      - PM2_INSTANCE=2
+      - PM2_MAX_MEM_RESTART=150M
+    restart: always
+    expose: 
+      - 3000
+    depends_on:
+      - mongodb
