@@ -12,12 +12,12 @@ install_dependencies:
   stage: build
   script:
     - npm install
-  tags:
-    - nodejs
+  # tags:
+  #   - nodejs
 
 testing_apps:
   stage: test
   script: 
     - npm test
     - npm run coverage
-    
+
