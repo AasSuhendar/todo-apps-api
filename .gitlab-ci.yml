@@ -4,9 +4,6 @@ cache:
   paths:
   - node_modules/
 
-before_script:
-  - docker info
-
 stages:
   - build
   - test
@@ -18,8 +15,6 @@ install_dependencies:
   artifacts:
     paths:
       - node_modules/
-  tags:
-    - docker
 
 build_image:
   stage: build
