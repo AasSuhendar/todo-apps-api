@@ -4,9 +4,12 @@ cache:
   paths:
   - node_modules/
 
+before_script:
+  - docker info
+
 stages:
-  - test
   - build
+  - test
 
 install_dependencies:
   stage: build
@@ -15,9 +18,15 @@ install_dependencies:
   # tags:
   #   - nodejs
 
+build_image:
+  script:
+    - docker build -t todo-apps-api .
+    # - docker run --rm todo-apps-api 
+
 testing_apps:
   stage: test
   script: 
     - npm test
     - npm run coverage
+
 
