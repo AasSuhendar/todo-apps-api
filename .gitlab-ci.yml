@@ -6,12 +6,18 @@ cache:
 
 stages:
   - test
+  - build
 
-test_async:
-  stage: test
+install_dependencies:
+  stage: build
   script:
-   - npm install
-   - npm test
-   - npm run coverage
+    - npm install
   tags:
-    - docker
+    - nodejs
+
+testing_apps:
+  stage: test
+  script: 
+    - npm test
+    - npm run coverage
+    
