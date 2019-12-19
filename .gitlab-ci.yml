@@ -15,13 +15,19 @@ install_dependencies:
   stage: build
   script:
     - npm install
-  # tags:
-  #   - nodejs
+  artifacts:
+    paths:
+      - node_modules/
+  tags:
+    - docker
 
 build_image:
+  stage: build
   script:
     - docker build -t todo-apps-api .
     # - docker run --rm todo-apps-api 
+  tags:
+    - docker
 
 testing_apps:
   stage: test
