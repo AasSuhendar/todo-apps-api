@@ -18,6 +18,9 @@ install_dependencies:
 
 build_image:
   stage: build
+  image: docker:latest
+  services:
+    - docker:dind
   script:
     - docker build -t todo-apps-api .
     # - docker run --rm todo-apps-api 
