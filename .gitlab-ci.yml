@@ -5,8 +5,8 @@ cache:
   - node_modules/
 
 stages:
-  - build
   - test
+  - build
 
 install_dependencies:
   stage: build
@@ -15,6 +15,10 @@ install_dependencies:
   artifacts:
     paths:
       - node_modules/
+  services:
+    - mongo:3.2
+  variables:
+    MONGO_URL: mongodb://mongo:27017/todos
 
 build_image:
   stage: build
@@ -22,8 +26,9 @@ build_image:
   services:
     - docker:dind
   script:
+    - docker info
     - docker build -t todo-apps-api .
-    # - docker run --rm todo-apps-api 
+    - docker images
   tags:
     - docker
 
