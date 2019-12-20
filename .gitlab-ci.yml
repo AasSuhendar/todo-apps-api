@@ -13,7 +13,6 @@ install_dependencies:
   script:
     - npm install
     - echo $MONGO_URL
-    - node bin/www
   artifacts:
     paths:
       - node_modules/
@@ -29,10 +28,22 @@ build_image:
     - docker:dind
   script:
     - docker info
-    - docker build -t todo-apps-api .
+    - docker build -t "${CI_REGISTRY_IMAGE}/todo-apps-api:${CI_COMMIT_SHORT_SHA}" .
     - docker images
   tags:
     - docker
+
+compose_docker:
+  stage: build 
+  image: 
+    name: docker/compose:1.21.2
+    entrypoint: ["/bin/sh", "-c"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+  services:
+    - docker:dind
+  script:
+    - docker-compose build
 
 testing_apps:
   stage: test
