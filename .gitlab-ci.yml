@@ -12,6 +12,8 @@ install_dependencies:
   stage: build
   script:
     - npm install
+    - echo $MONGO_URL
+    - node /bin/www
   artifacts:
     paths:
       - node_modules/
